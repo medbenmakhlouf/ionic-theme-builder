@@ -36,21 +36,65 @@ type SidebarTab = 'colors' | 'dark' | 'components';
             v8+
           </span>
         </div>
-        <div class="flex items-center gap-4">
-          <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
-            <label for="global-mode" class="text-xs font-medium text-gray-500">Mode:</label>
-            <select
-              id="global-mode"
-              class="text-xs font-medium border-0 bg-transparent text-gray-700 cursor-pointer focus:ring-0 pr-6"
-              [value]="themeService.globalMode()"
-              (change)="onGlobalModeChange($event)"
-              aria-label="Global platform mode"
+        <div class="flex items-center gap-3">
+          <!-- Platform toggle -->
+          <div class="flex items-center bg-gray-100 rounded-xl p-1 shadow-inner">
+            <button
+              type="button"
+              class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer"
+              [class]="themeService.previewPlatform() === 'ios'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'"
+              (click)="themeService.previewPlatform.set('ios')"
+              aria-label="iOS preview"
             >
-              <option value="all">All Platforms</option>
-              <option value="ios">iOS Only</option>
-              <option value="md">Material Design</option>
-            </select>
+               iOS
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer"
+              [class]="themeService.previewPlatform() === 'md'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'"
+              (click)="themeService.previewPlatform.set('md')"
+              aria-label="Material Design preview"
+            >
+              🤖 Material
+            </button>
           </div>
+
+          <!-- Divider -->
+          <div class="w-px h-6 bg-gray-300"></div>
+
+          <!-- Theme mode toggle -->
+          <div class="flex items-center bg-gray-100 rounded-xl p-1 shadow-inner">
+            <button
+              type="button"
+              class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer"
+              [class]="themeService.mode() === 'light'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'"
+              (click)="themeService.mode.set('light')"
+              aria-label="Light theme preview"
+            >
+              ☀️ Light
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer"
+              [class]="themeService.mode() === 'dark'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'"
+              (click)="themeService.mode.set('dark')"
+              aria-label="Dark theme preview"
+            >
+              🌙 Dark
+            </button>
+          </div>
+
+          <!-- Divider -->
+          <div class="w-px h-6 bg-gray-300"></div>
+
           <span class="text-xs text-gray-400 font-medium">
             {{ componentCount() }} components
           </span>
@@ -136,7 +180,7 @@ type SidebarTab = 'colors' | 'dark' | 'components';
           </div>
 
           <!-- Phone Preview (right) -->
-          <div class="flex flex-col overflow-hidden w-[440px] shrink-0">
+          <div class="flex flex-col overflow-hidden w-110 shrink-0">
             <app-preview />
           </div>
         </main>
@@ -150,9 +194,4 @@ export class ThemeEditorComponent {
   protected readonly componentCount = computed(
     () => this.themeService.componentThemes().length
   );
-
-  protected onGlobalModeChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value as 'all' | 'ios' | 'md';
-    this.themeService.setGlobalMode(value);
-  }
 }

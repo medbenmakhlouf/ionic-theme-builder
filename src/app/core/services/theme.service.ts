@@ -23,6 +23,7 @@ import {
 export class ThemeService {
   readonly mode = signal<ThemeMode>('light');
   readonly globalMode = signal<IonicMode>('all');
+  readonly previewPlatform = signal<'ios' | 'md'>('ios');
   readonly globalTheme = signal<GlobalThemeConfig>({ ...DEFAULT_GLOBAL_THEME });
   readonly darkTheme = signal<DarkModeConfig>(structuredClone(DEFAULT_DARK_THEME));
   readonly componentThemes = signal<ComponentThemeConfig[]>(
