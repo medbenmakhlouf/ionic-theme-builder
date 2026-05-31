@@ -79,9 +79,9 @@ type SidebarTab = 'colors' | 'dark' | 'components';
               type="button"
               role="tab"
               [attr.aria-selected]="sidebarTab() === 'colors'"
-              class="flex-1 px-3 py-3 text-xs font-semibold transition-all cursor-pointer"
+              class="flex-1 px-4 py-4 text-sm font-semibold transition-all cursor-pointer"
               [class]="sidebarTab() === 'colors'
-                ? 'text-indigo-600 border-b-2 border-indigo-500 bg-indigo-50/30'
+                ? 'text-indigo-600 border-b-2 border-indigo-500 bg-indigo-50/40'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
               (click)="sidebarTab.set('colors')"
             >
@@ -91,21 +91,21 @@ type SidebarTab = 'colors' | 'dark' | 'components';
               type="button"
               role="tab"
               [attr.aria-selected]="sidebarTab() === 'dark'"
-              class="flex-1 px-3 py-3 text-xs font-semibold transition-all cursor-pointer"
+              class="flex-1 px-4 py-4 text-sm font-semibold transition-all cursor-pointer"
               [class]="sidebarTab() === 'dark'
-                ? 'text-indigo-600 border-b-2 border-indigo-500 bg-indigo-50/30'
+                ? 'text-indigo-600 border-b-2 border-indigo-500 bg-indigo-50/40'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
               (click)="sidebarTab.set('dark')"
             >
-              🌙 Dark Mode
+              🌙 Dark
             </button>
             <button
               type="button"
               role="tab"
               [attr.aria-selected]="sidebarTab() === 'components'"
-              class="flex-1 px-3 py-3 text-xs font-semibold transition-all cursor-pointer"
+              class="flex-1 px-4 py-4 text-sm font-semibold transition-all cursor-pointer"
               [class]="sidebarTab() === 'components'
-                ? 'text-indigo-600 border-b-2 border-indigo-500 bg-indigo-50/30'
+                ? 'text-indigo-600 border-b-2 border-indigo-500 bg-indigo-50/40'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
               (click)="sidebarTab.set('components')"
             >
@@ -132,30 +132,30 @@ type SidebarTab = 'colors' | 'dark' | 'components';
         <!-- Main Panel -->
         <main class="flex-1 flex flex-col overflow-hidden p-5">
           <!-- Tab Switcher -->
-          <div class="flex gap-1 mb-4 bg-gray-100 rounded-xl p-1 w-fit shadow-inner" role="tablist">
+          <div class="flex gap-1 mb-4 bg-gray-100 rounded-xl p-1.5 w-fit shadow-inner" role="tablist">
             <button
               type="button"
               role="tab"
               [attr.aria-selected]="activeTab() === 'preview'"
-              class="px-5 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer"
+              class="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all cursor-pointer"
               [class]="activeTab() === 'preview'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-500 hover:text-gray-700'"
               (click)="activeTab.set('preview')"
             >
-              Preview
+              👁 Preview
             </button>
             <button
               type="button"
               role="tab"
               [attr.aria-selected]="activeTab() === 'css'"
-              class="px-5 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer"
+              class="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all cursor-pointer"
               [class]="activeTab() === 'css'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-500 hover:text-gray-700'"
               (click)="activeTab.set('css')"
             >
-              CSS Output
+              💻 CSS Output
             </button>
           </div>
 
