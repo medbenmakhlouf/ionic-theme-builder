@@ -7,7 +7,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../../core/services/theme.service';
 import {
-  DarkModeStrategy,
+  DarkModeConfig,
   IONIC_COLOR_NAMES,
   IonicColorName,
 } from '../../../core/models/theme.model';
@@ -17,128 +17,132 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule],
   template: `
-    <section class="space-y-4">
+    <section class="space-y-5">
+      <!-- Header -->
       <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-gray-900">Dark Mode</h2>
+        <h2 class="text-base font-semibold text-gray-900">Dark Mode</h2>
         <button
           type="button"
-          class="text-sm text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+          class="text-xs font-medium text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
           (click)="themeService.resetDarkColors()"
           aria-label="Reset dark mode settings"
         >
-          Reset
+          Reset All
         </button>
       </div>
 
       <!-- Enable toggle -->
-      <div class="flex items-center justify-between">
-        <label for="dark-enabled" class="text-sm font-medium text-gray-700">
-          Enable Dark Mode
-        </label>
-        <input
-          id="dark-enabled"
-          type="checkbox"
-          [ngModel]="darkTheme().enabled"
-          (ngModelChange)="themeService.toggleDarkMode($event)"
-          class="w-5 h-5 rounded border-gray-300 text-blue-600 cursor-pointer"
-          aria-label="Enable dark mode"
-        />
-      </div>
+      <label
+        for="dark-enabled"
+        class="flex items-center justify-between px-3 py-3 rounded-lg bg-gray-50 border border-gray-100 cursor-pointer"
+      >
+        <span class="text-sm font-medium text-gray-700">Enable Dark Mode</span>
+        <div class="relative inline-flex items-center">
+          <input
+            id="dark-enabled"
+            type="checkbox"
+            [ngModel]="darkTheme().enabled"
+            (ngModelChange)="themeService.toggleDarkMode($event)"
+            class="sr-only peer"
+            aria-label="Enable dark mode"
+          />
+          <div class="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-indigo-500 transition-colors"></div>
+          <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform peer-checked:translate-x-4"></div>
+        </div>
+      </label>
 
       @if (darkTheme().enabled) {
         <!-- Strategy -->
         <div class="space-y-2">
-          <label for="dark-strategy" class="text-sm font-medium text-gray-700">
+          <label for="dark-strategy" class="text-xs font-semibold uppercase tracking-wider text-gray-400">
             Strategy
           </label>
           <select
             id="dark-strategy"
             [ngModel]="darkTheme().strategy"
             (ngModelChange)="themeService.updateDarkStrategy($event)"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white"
+            class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all cursor-pointer"
             aria-label="Dark mode strategy"
           >
             <option value="system">System (prefers-color-scheme)</option>
             <option value="class">CSS Class (.ion-palette-dark)</option>
-            <option value="always">Always</option>
+            <option value="always">Always Override</option>
           </select>
-          <p class="text-xs text-gray-500">
+          <p class="text-xs text-gray-400 italic px-1">
             @switch (darkTheme().strategy) {
-              @case ('system') {
-                Applies based on OS/browser dark mode preference.
-              }
-              @case ('class') {
-                Applies when .ion-palette-dark class is on html element.
-              }
-              @case ('always') {
-                Overrides light theme entirely (replaces :root).
-              }
+              @case ('system') { Uses OS/browser preference automatically. }
+              @case ('class') { Activated via .ion-palette-dark class on html. }
+              @case ('always') { Replaces light theme entirely. }
             }
           </p>
         </div>
 
-        <!-- Dark colors -->
-        <h3 class="text-md font-semibold text-gray-800 pt-2">Dark Palette Colors</h3>
-        <div class="grid grid-cols-1 gap-3">
-          @for (color of colorNames; track color) {
-            <div class="flex items-center gap-3">
-              <label
-                [attr.for]="'dark-color-' + color"
-                class="flex-1 text-sm font-medium text-gray-700 capitalize"
-              >
-                {{ color }}
-              </label>
-              <div class="flex items-center gap-2">
+        <!-- Dark palette colors -->
+        <div class="border-t border-gray-100 pt-4">
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-2 px-3">
+            Dark Palette Colors
+          </p>
+          <div class="space-y-1">
+            @for (color of colorNames; track color) {
+              <div class="flex items-center gap-3 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
                 <input
                   [id]="'dark-color-' + color"
                   type="color"
                   [ngModel]="darkColors()[color]"
                   (ngModelChange)="themeService.updateDarkColor(color, $event)"
-                  class="w-9 h-9 rounded-lg border border-gray-300 cursor-pointer p-0.5"
+                  class="w-7 h-7 rounded-md border border-gray-200 cursor-pointer shadow-sm p-0"
                   [attr.aria-label]="'Dark ' + color + ' color'"
                 />
+                <label
+                  [attr.for]="'dark-color-' + color"
+                  class="flex-1 text-sm text-gray-600 capitalize cursor-pointer"
+                >
+                  {{ color }}
+                </label>
                 <input
                   type="text"
                   [ngModel]="darkColors()[color]"
                   (ngModelChange)="themeService.updateDarkColor(color, $event)"
-                  class="w-22 text-xs font-mono px-2 py-1.5 border border-gray-300 rounded-md bg-white"
+                  class="w-[5.5rem] text-xs font-mono px-2 py-1.5 border border-gray-200 rounded-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all"
                   [attr.aria-label]="'Dark ' + color + ' hex value'"
                 />
               </div>
-            </div>
-          }
+            }
+          </div>
         </div>
 
         <!-- Dark global settings -->
-        <h3 class="text-md font-semibold text-gray-800 pt-2">Dark Global Settings</h3>
-        <div class="grid grid-cols-1 gap-3">
-          @for (prop of darkProperties; track prop.key) {
-            <div class="flex items-center gap-3">
-              <label
-                [attr.for]="'dark-' + prop.key"
-                class="flex-1 text-sm font-medium text-gray-700"
-              >
-                {{ prop.label }}
-              </label>
-              <div class="flex items-center gap-2">
+        <div class="border-t border-gray-100 pt-4">
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-2 px-3">
+            Dark Global Properties
+          </p>
+          <div class="space-y-1">
+            @for (prop of darkProperties; track prop.key) {
+              <div class="flex items-center gap-3 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
                 <input
                   [id]="'dark-' + prop.key"
                   type="color"
                   [ngModel]="getDarkPropValue(prop.key)"
                   (ngModelChange)="themeService.updateDarkProperty(prop.key, $event)"
-                  class="w-9 h-9 rounded-lg border border-gray-300 cursor-pointer p-0.5"
+                  class="w-7 h-7 rounded-md border border-gray-200 cursor-pointer shadow-sm p-0"
                   [attr.aria-label]="'Dark ' + prop.label"
                 />
+                <label
+                  [attr.for]="'dark-' + prop.key"
+                  class="flex-1 text-sm text-gray-600 cursor-pointer"
+                >
+                  {{ prop.label }}
+                </label>
                 <input
                   type="text"
                   [ngModel]="getDarkPropValue(prop.key)"
                   (ngModelChange)="themeService.updateDarkProperty(prop.key, $event)"
-                  class="w-22 text-xs font-mono px-2 py-1.5 border border-gray-300 rounded-md bg-white"
+                  class="w-[5.5rem] text-xs font-mono px-2 py-1.5 border border-gray-200 rounded-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all"
                   [attr.aria-label]="'Dark ' + prop.label + ' hex value'"
                 />
               </div>
-            </div>
-          }
+            }
+          </div>
         </div>
       }
     </section>
@@ -151,25 +155,24 @@ export class DarkModeEditorComponent {
   protected readonly darkColors = computed(() => this.darkTheme().colors);
 
   protected readonly darkProperties: {
-    key: keyof Omit<import('../../../core/models/theme.model').DarkModeConfig, 'colors' | 'enabled' | 'strategy'>;
+    key: keyof Omit<DarkModeConfig, 'colors' | 'enabled' | 'strategy'>;
     label: string;
   }[] = [
     { key: 'backgroundColor', label: 'Background' },
     { key: 'textColor', label: 'Text Color' },
     { key: 'toolbarBackground', label: 'Toolbar BG' },
-    { key: 'toolbarColor', label: 'Toolbar Color' },
+    { key: 'toolbarColor', label: 'Toolbar Text' },
     { key: 'toolbarBorderColor', label: 'Toolbar Border' },
     { key: 'itemBackground', label: 'Item BG' },
     { key: 'itemBorderColor', label: 'Item Border' },
     { key: 'cardBackground', label: 'Card BG' },
-    { key: 'borderColor', label: 'Border Color' },
+    { key: 'borderColor', label: 'Border' },
     { key: 'tabBarBackground', label: 'Tab Bar BG' },
-    { key: 'tabBarColor', label: 'Tab Bar Color' },
-    { key: 'tabBarColorSelected', label: 'Tab Selected' },
+    { key: 'tabBarColor', label: 'Tab Bar Text' },
+    { key: 'tabBarColorSelected', label: 'Tab Bar Selected' },
   ];
 
   protected getDarkPropValue(key: string): string {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (this.darkTheme() as any)[key] as string;
+    return (this.darkTheme() as unknown as Record<string, string>)[key];
   }
 }

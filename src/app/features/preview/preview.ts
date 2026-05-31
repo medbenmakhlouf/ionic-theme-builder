@@ -17,37 +17,62 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
   template: `
     <section class="h-full flex flex-col">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="text-lg font-semibold text-gray-900">Live Preview</h2>
-        <div class="flex items-center gap-3">
-          <div class="flex items-center gap-2">
-            <label for="preview-platform" class="text-sm text-gray-600">Platform:</label>
-            <select
-              id="preview-platform"
-              class="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white"
-              [value]="previewPlatform()"
-              (change)="onPlatformChange($event)"
+        <h2 class="text-base font-semibold text-gray-900">Live Preview</h2>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center bg-gray-100 rounded-lg p-0.5">
+            <button
+              type="button"
+              class="px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer"
+              [class]="previewPlatform() === 'ios'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'"
+              (click)="previewPlatform.set('ios')"
+              aria-label="iOS preview"
             >
-              <option value="ios">iOS</option>
-              <option value="md">Material Design</option>
-            </select>
+               iOS
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer"
+              [class]="previewPlatform() === 'md'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'"
+              (click)="previewPlatform.set('md')"
+              aria-label="Material Design preview"
+            >
+              🤖 MD
+            </button>
           </div>
-          <div class="flex items-center gap-2">
-            <label for="preview-mode" class="text-sm text-gray-600">Theme:</label>
-            <select
-              id="preview-mode"
-              class="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white"
-              [value]="previewMode()"
-              (change)="onModeChange($event)"
+          <div class="w-px h-5 bg-gray-200"></div>
+          <div class="flex items-center bg-gray-100 rounded-lg p-0.5">
+            <button
+              type="button"
+              class="px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer"
+              [class]="previewMode() === 'light'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'"
+              (click)="previewMode.set('light')"
+              aria-label="Light theme preview"
             >
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-            </select>
+              ☀️ Light
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer"
+              [class]="previewMode() === 'dark'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'"
+              (click)="previewMode.set('dark')"
+              aria-label="Dark theme preview"
+            >
+              🌙 Dark
+            </button>
           </div>
         </div>
       </div>
 
       <div
-        class="flex-1 overflow-auto rounded-lg border border-gray-200 ionic-preview-container"
+        class="flex-1 overflow-auto rounded-xl border border-gray-200 shadow-sm ionic-preview-container"
         [style]="previewStyles()"
         [class.ion-palette-dark]="previewMode() === 'dark'"
       >
@@ -305,31 +330,14 @@ export class PreviewComponent {
   protected readonly previewMode = signal<'light' | 'dark'>('light');
   protected readonly previewPlatform = signal<'ios' | 'md'>('ios');
 
-  protected onModeChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value as 'light' | 'dark';
-    this.previewMode.set(value);
-  }
-
-  protected onPlatformChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value as 'ios' | 'md';
-    this.previewPlatform.set(value);
-  }
-
   protected readonly previewStyles = computed(() => {
     const mode = this.previewMode();
     const theme = this.themeService.globalTheme();
     const dark = this.themeService.darkTheme();
+    const isDark = mode === 'dark' && dark.enabled;
     const styles: string[] = [];
 
-    const activeColors = mode === 'dark' && dark.enabled ? dark.colors : theme.colors;
-    const activeBg = mode === 'dark' && dark.enabled ? dark.backgroundColor : theme.backgroundColor;
-    const activeText = mode === 'dark' && dark.enabled ? dark.textColor : theme.textColor;
-    const activeToolbarBg = mode === 'dark' && dark.enabled ? dark.toolbarBackground : theme.toolbarBackground;
-    const activeToolbarColor = mode === 'dark' && dark.enabled ? dark.toolbarColor : theme.toolbarColor;
-    const activeItemBg = mode === 'dark' && dark.enabled ? dark.itemBackground : theme.itemBackground;
-    const activeCardBg = mode === 'dark' && dark.enabled ? dark.cardBackground : theme.cardBackground;
-    const activeBorderColor = mode === 'dark' && dark.enabled ? dark.borderColor : theme.borderColor;
-    const activeTabBarBg = mode === 'dark' && dark.enabled ? dark.tabBarBackground : theme.tabBarBackground;
+    const activeColors = isDark ? dark.colors : theme.colors;
 
     // Color variables
     for (const name of IONIC_COLOR_NAMES) {
@@ -341,18 +349,39 @@ export class PreviewComponent {
       }
     }
 
-    // Global variables
-    styles.push(`--ion-background-color: ${activeBg}`);
-    styles.push(`--ion-text-color: ${activeText}`);
+    // Background & Text
+    const bg = isDark ? dark.backgroundColor : theme.backgroundColor;
+    const text = isDark ? dark.textColor : theme.textColor;
+    styles.push(`--ion-background-color: ${bg}`);
+    styles.push(`--ion-text-color: ${text}`);
+    styles.push(`background-color: ${bg}`);
+    styles.push(`color: ${text}`);
+    styles.push(`font-family: ${theme.fontFamily}`);
     styles.push(`--ion-font-family: ${theme.fontFamily}`);
-    styles.push(`--ion-toolbar-background: ${activeToolbarBg}`);
-    styles.push(`--ion-toolbar-color: ${activeToolbarColor}`);
-    styles.push(`--ion-item-background: ${activeItemBg}`);
-    styles.push(`--ion-card-background: ${activeCardBg}`);
-    styles.push(`--ion-border-color: ${activeBorderColor}`);
-    styles.push(`--ion-tab-bar-background: ${activeTabBarBg}`);
-    styles.push(`background-color: ${activeBg}`);
-    styles.push(`color: ${activeText}`);
+
+    // Toolbar
+    styles.push(`--ion-toolbar-background: ${isDark ? dark.toolbarBackground : theme.toolbarBackground}`);
+    styles.push(`--ion-toolbar-color: ${isDark ? dark.toolbarColor : theme.toolbarColor}`);
+    styles.push(`--ion-toolbar-border-color: ${isDark ? dark.toolbarBorderColor : theme.toolbarBorderColor}`);
+
+    // Items
+    styles.push(`--ion-item-background: ${isDark ? dark.itemBackground : theme.itemBackground}`);
+    styles.push(`--ion-item-border-color: ${isDark ? dark.itemBorderColor : theme.itemBorderColor}`);
+
+    // Card
+    styles.push(`--ion-card-background: ${isDark ? dark.cardBackground : theme.cardBackground}`);
+
+    // Tab Bar
+    styles.push(`--ion-tab-bar-background: ${isDark ? dark.tabBarBackground : theme.tabBarBackground}`);
+    styles.push(`--ion-tab-bar-border-color: ${theme.tabBarBorderColor}`);
+    styles.push(`--ion-tab-bar-color: ${isDark ? dark.tabBarColor : theme.tabBarColor}`);
+    styles.push(`--ion-tab-bar-color-selected: ${isDark ? dark.tabBarColorSelected : theme.tabBarColorSelected}`);
+
+    // Other
+    styles.push(`--ion-border-color: ${isDark ? dark.borderColor : theme.borderColor}`);
+    styles.push(`--ion-placeholder-color: ${theme.placeholderColor}`);
+    styles.push(`--ion-backdrop-color: ${theme.backdropColor}`);
+    styles.push(`--ion-backdrop-opacity: ${theme.backdropOpacity}`);
 
     return styles.join('; ');
   });

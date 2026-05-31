@@ -13,56 +13,53 @@ import { ThemeService } from '../../../core/services/theme.service';
   imports: [FormsModule],
   template: `
     <section class="space-y-4">
-      <h2 class="text-lg font-semibold text-gray-900">Component Styles</h2>
+      <h2 class="text-base font-semibold text-gray-900">Component Overrides</h2>
+      <p class="text-xs text-gray-400">Customize CSS variables per Ionic component.</p>
 
-      <div class="space-y-2">
+      <div class="space-y-1.5">
         @for (component of themeService.componentThemes(); track component.componentName) {
-          <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <div class="rounded-lg border border-gray-100 overflow-hidden bg-white shadow-sm">
+            <!-- Accordion header -->
             <button
               type="button"
-              class="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+              class="w-full flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50 transition-colors cursor-pointer"
               [attr.aria-expanded]="expandedComponent() === component.componentName"
               [attr.aria-controls]="'panel-' + component.componentName"
               (click)="toggleComponent(component.componentName)"
             >
-              <span class="flex items-center gap-2">
-                <span class="text-sm font-medium text-gray-800">
-                  {{ component.label }}
-                </span>
-                @if (component.mode !== 'all') {
-                  <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 uppercase">
-                    {{ component.mode }}
-                  </span>
-                }
-              </span>
               <span
-                class="text-gray-500 text-xs transition-transform duration-200"
-                [class.rotate-180]="expandedComponent() === component.componentName"
+                class="text-[10px] text-gray-400 transition-transform duration-200"
+                [class.rotate-90]="expandedComponent() === component.componentName"
                 aria-hidden="true"
-              >
-                ▼
+              >▶</span>
+              <span class="flex-1 text-left text-sm font-medium text-gray-800">
+                {{ component.label }}
               </span>
+              @if (component.mode !== 'all') {
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 uppercase">
+                  {{ component.mode }}
+                </span>
+              }
+              @if (hasOverrides(component.variables)) {
+                <span class="w-2 h-2 rounded-full bg-indigo-400" aria-label="Has custom values"></span>
+              }
             </button>
 
             @if (expandedComponent() === component.componentName) {
               <div
                 [id]="'panel-' + component.componentName"
                 role="region"
-                class="px-4 py-3 space-y-3 border-t border-gray-200"
+                class="px-3 pb-3 pt-1 space-y-3 border-t border-gray-50"
               >
-                <div class="flex items-center justify-between">
+                <!-- Mode + Reset row -->
+                <div class="flex items-center justify-between py-1">
                   <div class="flex items-center gap-2">
-                    <label
-                      [attr.for]="'mode-' + component.componentName"
-                      class="text-xs font-medium text-gray-500"
-                    >
-                      Mode:
-                    </label>
+                    <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Mode:</span>
                     <select
                       [id]="'mode-' + component.componentName"
                       [value]="component.mode"
                       (change)="onComponentModeChange(component.componentName, $event)"
-                      class="text-xs border border-gray-300 rounded px-1.5 py-0.5 bg-white cursor-pointer"
+                      class="text-xs border border-gray-200 rounded-md px-2 py-1 bg-gray-50 focus:border-indigo-400 cursor-pointer"
                       [attr.aria-label]="component.label + ' platform mode'"
                     >
                       <option value="all">All</option>
@@ -72,7 +69,7 @@ import { ThemeService } from '../../../core/services/theme.service';
                   </div>
                   <button
                     type="button"
-                    class="text-xs text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+                    class="text-[11px] text-indigo-600 hover:text-indigo-800 font-medium cursor-pointer"
                     (click)="themeService.resetComponent(component.componentName)"
                     [attr.aria-label]="'Reset ' + component.label + ' to defaults'"
                   >
@@ -80,64 +77,45 @@ import { ThemeService } from '../../../core/services/theme.service';
                   </button>
                 </div>
 
+                <!-- Variables -->
                 @for (variable of component.variables; track variable.name) {
-                  <div class="flex items-center gap-3">
+                  <div class="flex items-center gap-2">
+                    @if (variable.type === 'color') {
+                      <input
+                        [id]="component.componentName + '-' + variable.name"
+                        type="color"
+                        [ngModel]="variable.value"
+                        (ngModelChange)="
+                          themeService.updateComponentVariable(
+                            component.componentName,
+                            variable.name,
+                            $event
+                          )
+                        "
+                        class="w-6 h-6 rounded border border-gray-200 cursor-pointer p-0"
+                        [attr.aria-label]="variable.label + ' color'"
+                      />
+                    }
                     <label
                       [attr.for]="component.componentName + '-' + variable.name"
-                      class="flex-1 text-xs font-medium text-gray-600"
+                      class="flex-1 text-xs text-gray-600 truncate cursor-pointer"
+                      [title]="variable.name"
                     >
                       {{ variable.label }}
                     </label>
-
-                    @switch (variable.type) {
-                      @case ('color') {
-                        <div class="flex items-center gap-2">
-                          <input
-                            [id]="component.componentName + '-' + variable.name"
-                            type="color"
-                            [ngModel]="variable.value"
-                            (ngModelChange)="
-                              themeService.updateComponentVariable(
-                                component.componentName,
-                                variable.name,
-                                $event
-                              )
-                            "
-                            class="w-8 h-8 rounded border border-gray-300 cursor-pointer p-0.5"
-                            [attr.aria-label]="variable.label + ' color'"
-                          />
-                          <input
-                            type="text"
-                            [ngModel]="variable.value"
-                            (ngModelChange)="
-                              themeService.updateComponentVariable(
-                                component.componentName,
-                                variable.name,
-                                $event
-                              )
-                            "
-                            class="w-20 text-xs font-mono px-2 py-1 border border-gray-300 rounded bg-white"
-                            [attr.aria-label]="variable.label + ' hex value'"
-                          />
-                        </div>
-                      }
-                      @default {
-                        <input
-                          [id]="component.componentName + '-' + variable.name"
-                          type="text"
-                          [ngModel]="variable.value"
-                          (ngModelChange)="
-                            themeService.updateComponentVariable(
-                              component.componentName,
-                              variable.name,
-                              $event
-                            )
-                          "
-                          class="w-24 text-xs font-mono px-2 py-1 border border-gray-300 rounded bg-white"
-                          [attr.aria-label]="variable.label + ' value'"
-                        />
-                      }
-                    }
+                    <input
+                      type="text"
+                      [ngModel]="variable.value"
+                      (ngModelChange)="
+                        themeService.updateComponentVariable(
+                          component.componentName,
+                          variable.name,
+                          $event
+                        )
+                      "
+                      class="w-[5.5rem] text-xs font-mono px-2 py-1 border border-gray-200 rounded-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all"
+                      [attr.aria-label]="variable.label + ' value'"
+                    />
                   </div>
                 }
               </div>
@@ -161,5 +139,9 @@ export class ComponentEditorComponent {
   protected onComponentModeChange(componentName: string, event: Event): void {
     const value = (event.target as HTMLSelectElement).value as 'all' | 'ios' | 'md';
     this.themeService.updateComponentMode(componentName, value);
+  }
+
+  protected hasOverrides(variables: { value: string; defaultValue: string }[]): boolean {
+    return variables.some((v) => v.value !== v.defaultValue);
   }
 }
