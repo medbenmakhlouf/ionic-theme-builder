@@ -1,59 +1,136 @@
-# IonicThemeBuilder
+# Ionic Theme Builder
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.13.
+A visual design tool for crafting custom [Ionic Framework](https://ionicframework.com/) themes with real-time preview. Build, customize, and export production-ready CSS variables for your Ionic Angular applications — no manual variable hunting required.
 
-## Development server
+![Angular](https://img.shields.io/badge/Angular-21-dd0031?logo=angular)
+![Ionic](https://img.shields.io/badge/Ionic-8-3880ff?logo=ionic)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06b6d4?logo=tailwindcss)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-To start a local development server, run:
+---
+
+## ✨ Features
+
+### 🎨 Global Theme Editor
+- **9 Ionic color palette** customization (primary, secondary, tertiary, success, warning, danger, dark, medium, light)
+- **Custom colors** — add unlimited named colors with auto-generated `ion-color-*` utility classes
+- **Global properties** — background, text, toolbar, items, cards, tab bar, fonts, borders
+- **Stepped colors** — automatically generated for smooth color transitions
+
+### 📱 Live Phone Preview
+- **Realistic device frames** — iOS (Dynamic Island) and Android (punch-hole camera)
+- **Per-component mode** — each Ionic component independently renders in iOS or Material Design mode
+- **Instant feedback** — CSS variable changes reflect immediately in the preview
+- **All Ionic components** — toolbar, buttons, cards, segments, lists, inputs, selects, toggles, checkboxes, radios, ranges, progress bars, spinners, chips, badges, accordions, breadcrumbs, datetime, FAB, tab bar, and more
+
+### 🧩 Component Overrides
+- **Per-component CSS variable** editing for 25+ Ionic components
+- **Numeric inputs** with unit selectors (px / rem) for size variables
+- **Per-component platform mode** — override individual components to iOS or Material Design
+- **Tailwind CSS v4 integration** — optional one-click conversion to Tailwind design tokens:
+  - `--border-radius` → `var(--radius-lg)`
+  - `--padding-*` → `var(--spacing-4)`
+  - `--box-shadow` → `var(--shadow-md)`
+
+### 🌗 Dark Mode
+- **Three strategies** — always, system preference (`prefers-color-scheme`), or class-based (`.ion-palette-dark`)
+- **Independent dark palette** — separate color overrides for dark mode
+- **Live toggle** — switch between light and dark in the preview
+
+### 📋 CSS Output
+- **Production-ready CSS** — copy or download the generated stylesheet
+- **Mode-aware selectors** — output scoped to `:root`, `:root.ios`, or `:root.md`
+- **Component selectors** — per-component overrides with proper specificity
+- **Custom color utility classes** — `.ion-color-{name}` with full variable mapping
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- npm 10+
+
+### Installation
+
+```bash
+git clone https://github.com/medbenmakhlouf/ionic-theme-builder.git
+cd ionic-theme-builder
+npm install
+```
+
+### Development
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open [http://localhost:4200](http://localhost:4200) in your browser.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+### Build
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Production artifacts are output to `dist/ionic-theme-builder/`.
 
-## Running unit tests
+---
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## 🏗️ Architecture
 
-```bash
-ng test
+```
+src/app/
+├── core/
+│   ├── models/          # Theme interfaces, defaults, Tailwind tokens
+│   ├── services/        # ThemeService (central state management with signals)
+│   └── utils/           # Color generation utilities (contrast, shade, tint, RGB)
+├── features/
+│   ├── theme-editor/    # Main layout, header controls
+│   │   ├── global-colors/      # Color palette + custom colors + global properties
+│   │   ├── component-editor/   # Per-component variable overrides
+│   │   └── dark-mode-editor/   # Dark mode configuration
+│   ├── preview/         # Live phone frame preview with all Ionic components
+│   └── css-output/      # Generated CSS display with copy/download
+└── app.ts              # Root component with routing
 ```
 
-## Running end-to-end tests
+### Key Design Decisions
 
-For end-to-end (e2e) testing, run:
+- **Angular Signals** for reactive state management (no RxJS for UI state)
+- **Standalone components** (Angular 21+ default)
+- **CUSTOM_ELEMENTS_SCHEMA** for Ionic web components in preview
+- **Static `mode` attributes** with `@if`/`@else` branching — Ionic reads mode once at init, so dynamic binding doesn't work
+- **Tailwind CSS v4** for the builder UI itself (utility-first styling)
+- **OnPush change detection** throughout for performance
 
-```bash
-ng e2e
-```
+---
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## 🛠️ Tech Stack
 
-## Additional Resources
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| Angular | 21 | Application framework |
+| Ionic Framework | 8 | Component library (preview target) |
+| Tailwind CSS | 4 | Builder UI styling |
+| TypeScript | 5.8 | Type safety |
+| Vitest | — | Unit testing |
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
+
+## 📄 License
+
+MIT
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
