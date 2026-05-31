@@ -1,5 +1,5 @@
-import { DOCUMENT } from '@angular/common';
-import { Injectable, inject, isDevMode } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID, inject, isDevMode } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 
@@ -9,12 +9,12 @@ declare let gtag: (...args: unknown[]) => void;
 export class AnalyticsService {
   private readonly router = inject(Router);
   private readonly document = inject(DOCUMENT);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly trackingId = isDevMode() ? 'G-XXXXXXXXXX' : 'G-0S96RRYDWK';
 
   init(): void {
-    if (!this.trackingId || this.trackingId === 'G-XXXXXXXXXX') {
-      return;
-    }
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (!this.trackingId || this.trackingId === 'G-XXXXXXXXXX') return;
 
     this.loadGtagScript();
 
