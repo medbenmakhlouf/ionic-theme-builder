@@ -7,6 +7,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../../core/services/theme.service';
 import {
+  GlobalThemeConfig,
   IONIC_COLOR_NAMES,
   IonicColorName,
 } from '../../../core/models/theme.model';
@@ -62,120 +63,45 @@ import {
       <hr class="border-gray-200" />
 
       <h3 class="text-md font-semibold text-gray-900">Global Settings</h3>
-      <div class="grid grid-cols-1 gap-4">
-        <div class="flex items-center gap-3">
-          <label for="bg-color" class="flex-1 text-sm font-medium text-gray-700">
-            Background
-          </label>
-          <div class="flex items-center gap-2">
-            <input
-              id="bg-color"
-              type="color"
-              [ngModel]="globalTheme().backgroundColor"
-              (ngModelChange)="
-                themeService.updateGlobalProperty('backgroundColor', $event)
-              "
-              class="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer p-0.5"
-              aria-label="Choose background color"
-            />
-            <input
-              type="text"
-              [ngModel]="globalTheme().backgroundColor"
-              (ngModelChange)="
-                themeService.updateGlobalProperty('backgroundColor', $event)
-              "
-              class="w-24 text-xs font-mono px-2 py-1.5 border border-gray-300 rounded-md bg-white"
-              aria-label="Background hex value"
-            />
+      <div class="grid grid-cols-1 gap-3">
+        @for (prop of globalProperties; track prop.key) {
+          <div class="flex items-center gap-3">
+            <label
+              [attr.for]="'global-' + prop.key"
+              class="flex-1 text-sm font-medium text-gray-700"
+            >
+              {{ prop.label }}
+            </label>
+            <div class="flex items-center gap-2">
+              @if (prop.type === 'color') {
+                <input
+                  [id]="'global-' + prop.key"
+                  type="color"
+                  [ngModel]="getGlobalValue(prop.key)"
+                  (ngModelChange)="themeService.updateGlobalProperty(prop.key, $event)"
+                  class="w-9 h-9 rounded-lg border border-gray-300 cursor-pointer p-0.5"
+                  [attr.aria-label]="'Choose ' + prop.label"
+                />
+                <input
+                  type="text"
+                  [ngModel]="getGlobalValue(prop.key)"
+                  (ngModelChange)="themeService.updateGlobalProperty(prop.key, $event)"
+                  class="w-22 text-xs font-mono px-2 py-1.5 border border-gray-300 rounded-md bg-white"
+                  [attr.aria-label]="prop.label + ' hex value'"
+                />
+              } @else {
+                <input
+                  [id]="'global-' + prop.key"
+                  type="text"
+                  [ngModel]="getGlobalValue(prop.key)"
+                  (ngModelChange)="themeService.updateGlobalProperty(prop.key, $event)"
+                  class="w-full text-xs font-mono px-2 py-1.5 border border-gray-300 rounded-md bg-white"
+                  [attr.aria-label]="prop.label + ' value'"
+                />
+              }
+            </div>
           </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <label for="text-color" class="flex-1 text-sm font-medium text-gray-700">
-            Text Color
-          </label>
-          <div class="flex items-center gap-2">
-            <input
-              id="text-color"
-              type="color"
-              [ngModel]="globalTheme().textColor"
-              (ngModelChange)="
-                themeService.updateGlobalProperty('textColor', $event)
-              "
-              class="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer p-0.5"
-              aria-label="Choose text color"
-            />
-            <input
-              type="text"
-              [ngModel]="globalTheme().textColor"
-              (ngModelChange)="
-                themeService.updateGlobalProperty('textColor', $event)
-              "
-              class="w-24 text-xs font-mono px-2 py-1.5 border border-gray-300 rounded-md bg-white"
-              aria-label="Text color hex value"
-            />
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <label
-            for="toolbar-bg"
-            class="flex-1 text-sm font-medium text-gray-700"
-          >
-            Toolbar BG
-          </label>
-          <div class="flex items-center gap-2">
-            <input
-              id="toolbar-bg"
-              type="color"
-              [ngModel]="globalTheme().toolbarBackground"
-              (ngModelChange)="
-                themeService.updateGlobalProperty('toolbarBackground', $event)
-              "
-              class="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer p-0.5"
-              aria-label="Choose toolbar background color"
-            />
-            <input
-              type="text"
-              [ngModel]="globalTheme().toolbarBackground"
-              (ngModelChange)="
-                themeService.updateGlobalProperty('toolbarBackground', $event)
-              "
-              class="w-24 text-xs font-mono px-2 py-1.5 border border-gray-300 rounded-md bg-white"
-              aria-label="Toolbar background hex value"
-            />
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <label
-            for="toolbar-color"
-            class="flex-1 text-sm font-medium text-gray-700"
-          >
-            Toolbar Color
-          </label>
-          <div class="flex items-center gap-2">
-            <input
-              id="toolbar-color"
-              type="color"
-              [ngModel]="globalTheme().toolbarColor"
-              (ngModelChange)="
-                themeService.updateGlobalProperty('toolbarColor', $event)
-              "
-              class="w-10 h-10 rounded-lg border border-gray-300 cursor-pointer p-0.5"
-              aria-label="Choose toolbar text color"
-            />
-            <input
-              type="text"
-              [ngModel]="globalTheme().toolbarColor"
-              (ngModelChange)="
-                themeService.updateGlobalProperty('toolbarColor', $event)
-              "
-              class="w-24 text-xs font-mono px-2 py-1.5 border border-gray-300 rounded-md bg-white"
-              aria-label="Toolbar color hex value"
-            />
-          </div>
-        </div>
+        }
       </div>
     </section>
   `,
@@ -187,4 +113,31 @@ export class GlobalColorsComponent {
   protected readonly colors = computed(
     () => this.themeService.globalTheme().colors
   );
+
+  protected readonly globalProperties: {
+    key: keyof Omit<GlobalThemeConfig, 'colors'>;
+    label: string;
+    type: 'color' | 'text';
+  }[] = [
+    { key: 'backgroundColor', label: 'Background', type: 'color' },
+    { key: 'textColor', label: 'Text Color', type: 'color' },
+    { key: 'toolbarBackground', label: 'Toolbar BG', type: 'color' },
+    { key: 'toolbarColor', label: 'Toolbar Color', type: 'color' },
+    { key: 'toolbarBorderColor', label: 'Toolbar Border', type: 'color' },
+    { key: 'itemBackground', label: 'Item BG', type: 'color' },
+    { key: 'itemBorderColor', label: 'Item Border', type: 'color' },
+    { key: 'cardBackground', label: 'Card BG', type: 'color' },
+    { key: 'tabBarBackground', label: 'Tab Bar BG', type: 'color' },
+    { key: 'tabBarBorderColor', label: 'Tab Bar Border', type: 'color' },
+    { key: 'tabBarColor', label: 'Tab Bar Color', type: 'color' },
+    { key: 'tabBarColorSelected', label: 'Tab Selected', type: 'color' },
+    { key: 'borderColor', label: 'Border Color', type: 'color' },
+    { key: 'placeholderColor', label: 'Placeholder', type: 'color' },
+    { key: 'fontFamily', label: 'Font Family', type: 'text' },
+  ];
+
+  protected getGlobalValue(key: string): string {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (this.globalTheme() as any)[key] as string;
+  }
 }

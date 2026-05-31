@@ -6,6 +6,7 @@ import {
   generateTint,
   generateContrast,
   generateIonicColorVariables,
+  generateSteppedColors,
 } from './color.utils';
 
 describe('color.utils', () => {
@@ -64,6 +65,26 @@ describe('color.utils', () => {
       expect(vars['--ion-color-primary-contrast-rgb']).toBeDefined();
       expect(vars['--ion-color-primary-shade']).toBeDefined();
       expect(vars['--ion-color-primary-tint']).toBeDefined();
+    });
+  });
+
+  describe('generateSteppedColors', () => {
+    it('should generate 19 stepped colors (50 to 950)', () => {
+      const steps = generateSteppedColors('#ffffff', '#000000');
+      expect(Object.keys(steps)).toHaveLength(19);
+      expect(steps['50']).toBeDefined();
+      expect(steps['500']).toBe('#808080');
+      expect(steps['950']).toBeDefined();
+    });
+
+    it('should return empty object for invalid colors', () => {
+      const steps = generateSteppedColors('invalid', '#000000');
+      expect(Object.keys(steps)).toHaveLength(0);
+    });
+
+    it('step 500 should be midpoint between base and target', () => {
+      const steps = generateSteppedColors('#000000', '#ffffff');
+      expect(steps['500']).toBe('#808080');
     });
   });
 });

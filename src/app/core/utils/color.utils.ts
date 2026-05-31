@@ -92,3 +92,28 @@ export function generateIonicColorVariables(
     [`--ion-color-${name}-tint`]: generateTint(hex),
   };
 }
+
+/**
+ * Generates stepped colors by mixing a base color toward a target color.
+ * Ionic uses steps from 50 to 950 in increments of 50.
+ * Each step is a percentage mix toward the target.
+ */
+export function generateSteppedColors(
+  base: string,
+  target: string
+): Record<string, string> {
+  const baseRgb = hexToRgb(base);
+  const targetRgb = hexToRgb(target);
+  if (!baseRgb || !targetRgb) return {};
+
+  const steps: Record<string, string> = {};
+  for (let i = 50; i <= 950; i += 50) {
+    const ratio = i / 1000;
+    const r = Math.round(baseRgb.r + (targetRgb.r - baseRgb.r) * ratio);
+    const g = Math.round(baseRgb.g + (targetRgb.g - baseRgb.g) * ratio);
+    const b = Math.round(baseRgb.b + (targetRgb.b - baseRgb.b) * ratio);
+    steps[i.toString()] = rgbToHex(r, g, b);
+  }
+  return steps;
+}
+

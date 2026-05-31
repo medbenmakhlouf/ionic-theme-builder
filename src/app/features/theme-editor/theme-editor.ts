@@ -1,16 +1,19 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from '@angular/core';
 import { GlobalColorsComponent } from './global-colors/global-colors';
 import { ComponentEditorComponent } from './component-editor/component-editor';
+import { DarkModeEditorComponent } from './dark-mode-editor/dark-mode-editor';
 import { PreviewComponent } from '../preview/preview';
 import { CssOutputComponent } from '../css-output/css-output';
 import { ThemeService } from '../../core/services/theme.service';
 
 type ActiveTab = 'preview' | 'css';
+type SidebarTab = 'colors' | 'dark' | 'components';
 
 @Component({
   selector: 'app-theme-editor',
@@ -18,13 +21,14 @@ type ActiveTab = 'preview' | 'css';
   imports: [
     GlobalColorsComponent,
     ComponentEditorComponent,
+    DarkModeEditorComponent,
     PreviewComponent,
     CssOutputComponent,
   ],
   template: `
     <div class="h-screen flex flex-col bg-gray-50">
       <!-- Header -->
-      <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shrink-0">
+      <header class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
         <div class="flex items-center gap-3">
           <h1 class="text-xl font-bold text-gray-900">
             ⚡ Ionic Theme Builder
@@ -33,26 +37,82 @@ type ActiveTab = 'preview' | 'css';
             v8+
           </span>
         </div>
-        <button
-          type="button"
-          class="px-4 py-2 text-sm font-medium bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors cursor-pointer"
-          (click)="themeService.resetAll()"
-          aria-label="Reset all theme settings"
-        >
-          Reset All
-        </button>
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-gray-500">
+            {{ componentCount() }} components
+          </span>
+          <button
+            type="button"
+            class="px-4 py-2 text-sm font-medium bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors cursor-pointer"
+            (click)="themeService.resetAll()"
+            aria-label="Reset all theme settings"
+          >
+            Reset All
+          </button>
+        </div>
       </header>
 
       <!-- Main Content -->
       <div class="flex-1 flex overflow-hidden">
-        <!-- Sidebar: Color Editor -->
+        <!-- Sidebar -->
         <aside
-          class="w-80 bg-white border-r border-gray-200 overflow-y-auto p-5 space-y-6 shrink-0"
+          class="w-84 bg-white border-r border-gray-200 flex flex-col shrink-0"
           aria-label="Theme editor sidebar"
         >
-          <app-global-colors />
-          <hr class="border-gray-200" />
-          <app-component-editor />
+          <!-- Sidebar tabs -->
+          <div class="flex border-b border-gray-200 shrink-0" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="sidebarTab() === 'colors'"
+              class="flex-1 px-3 py-2.5 text-xs font-medium transition-colors cursor-pointer"
+              [class]="sidebarTab() === 'colors'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-900'"
+              (click)="sidebarTab.set('colors')"
+            >
+              Colors
+            </button>
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="sidebarTab() === 'dark'"
+              class="flex-1 px-3 py-2.5 text-xs font-medium transition-colors cursor-pointer"
+              [class]="sidebarTab() === 'dark'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-900'"
+              (click)="sidebarTab.set('dark')"
+            >
+              Dark Mode
+            </button>
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="sidebarTab() === 'components'"
+              class="flex-1 px-3 py-2.5 text-xs font-medium transition-colors cursor-pointer"
+              [class]="sidebarTab() === 'components'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-900'"
+              (click)="sidebarTab.set('components')"
+            >
+              Components
+            </button>
+          </div>
+
+          <!-- Sidebar content -->
+          <div class="flex-1 overflow-y-auto p-5">
+            @switch (sidebarTab()) {
+              @case ('colors') {
+                <app-global-colors />
+              }
+              @case ('dark') {
+                <app-dark-mode-editor />
+              }
+              @case ('components') {
+                <app-component-editor />
+              }
+            }
+          </div>
         </aside>
 
         <!-- Main Panel -->
@@ -104,4 +164,8 @@ type ActiveTab = 'preview' | 'css';
 export class ThemeEditorComponent {
   protected readonly themeService = inject(ThemeService);
   protected readonly activeTab = signal<ActiveTab>('preview');
+  protected readonly sidebarTab = signal<SidebarTab>('colors');
+  protected readonly componentCount = computed(
+    () => this.themeService.componentThemes().length
+  );
 }

@@ -1,6 +1,9 @@
 import { computed, Injectable, signal } from '@angular/core';
 import {
   ComponentThemeConfig,
+  DarkModeConfig,
+  DarkModeStrategy,
+  DEFAULT_DARK_THEME,
   DEFAULT_GLOBAL_THEME,
   DEFAULT_IONIC_COLORS,
   GlobalThemeConfig,
@@ -9,12 +12,17 @@ import {
   IonicColorName,
   ThemeMode,
 } from '../models/theme.model';
-import { generateIonicColorVariables } from '../utils/color.utils';
+import {
+  generateIonicColorVariables,
+  generateSteppedColors,
+  hexToRgbString,
+} from '../utils/color.utils';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   readonly mode = signal<ThemeMode>('light');
   readonly globalTheme = signal<GlobalThemeConfig>({ ...DEFAULT_GLOBAL_THEME });
+  readonly darkTheme = signal<DarkModeConfig>(structuredClone(DEFAULT_DARK_THEME));
   readonly componentThemes = signal<ComponentThemeConfig[]>(
     structuredClone(IONIC_COMPONENTS)
   );
@@ -36,6 +44,29 @@ export class ThemeService {
       ...theme,
       [key]: value,
     }));
+  }
+
+  // Dark mode methods
+  toggleDarkMode(enabled: boolean): void {
+    this.darkTheme.update((t) => ({ ...t, enabled }));
+  }
+
+  updateDarkStrategy(strategy: DarkModeStrategy): void {
+    this.darkTheme.update((t) => ({ ...t, strategy }));
+  }
+
+  updateDarkColor(name: IonicColorName, value: string): void {
+    this.darkTheme.update((t) => ({
+      ...t,
+      colors: { ...t.colors, [name]: value },
+    }));
+  }
+
+  updateDarkProperty(
+    key: keyof Omit<DarkModeConfig, 'colors' | 'enabled' | 'strategy'>,
+    value: string
+  ): void {
+    this.darkTheme.update((t) => ({ ...t, [key]: value }));
   }
 
   updateComponentVariable(
@@ -60,6 +91,10 @@ export class ThemeService {
     this.globalTheme.set({ ...DEFAULT_GLOBAL_THEME });
   }
 
+  resetDarkColors(): void {
+    this.darkTheme.set(structuredClone(DEFAULT_DARK_THEME));
+  }
+
   resetComponent(componentName: string): void {
     this.componentThemes.update((themes) =>
       themes.map((theme) => {
@@ -74,11 +109,13 @@ export class ThemeService {
 
   resetAll(): void {
     this.globalTheme.set({ ...DEFAULT_GLOBAL_THEME });
+    this.darkTheme.set(structuredClone(DEFAULT_DARK_THEME));
     this.componentThemes.set(structuredClone(IONIC_COMPONENTS));
   }
 
   private buildCss(): string {
     const theme = this.globalTheme();
+    const dark = this.darkTheme();
     const components = this.componentThemes();
     const lines: string[] = [];
 
@@ -88,9 +125,9 @@ export class ThemeService {
     lines.push(' */');
     lines.push('');
 
-    // Global :root variables
+    // Light theme :root variables
     lines.push(':root {');
-    lines.push('  /* Global Colors */');
+    lines.push('  /* Ionic Color Variables */');
 
     for (const name of IONIC_COLOR_NAMES) {
       const hex = theme.colors[name] ?? DEFAULT_IONIC_COLORS[name];
@@ -103,15 +140,109 @@ export class ThemeService {
     }
 
     lines.push('');
-    lines.push('  /* Global Theme Variables */');
+    lines.push('  /* Application Colors */');
     lines.push(`  --ion-background-color: ${theme.backgroundColor};`);
+    lines.push(`  --ion-background-color-rgb: ${hexToRgbString(theme.backgroundColor)};`);
     lines.push(`  --ion-text-color: ${theme.textColor};`);
+    lines.push(`  --ion-text-color-rgb: ${hexToRgbString(theme.textColor)};`);
     lines.push(`  --ion-font-family: ${theme.fontFamily};`);
+    lines.push('');
+    lines.push('  /* Toolbar */');
     lines.push(`  --ion-toolbar-background: ${theme.toolbarBackground};`);
     lines.push(`  --ion-toolbar-color: ${theme.toolbarColor};`);
+    lines.push(`  --ion-toolbar-border-color: ${theme.toolbarBorderColor};`);
+    lines.push('');
+    lines.push('  /* Items */');
     lines.push(`  --ion-item-background: ${theme.itemBackground};`);
+    lines.push(`  --ion-item-border-color: ${theme.itemBorderColor};`);
+    lines.push('');
+    lines.push('  /* Cards */');
     lines.push(`  --ion-card-background: ${theme.cardBackground};`);
+    lines.push('');
+    lines.push('  /* Tab Bar */');
+    lines.push(`  --ion-tab-bar-background: ${theme.tabBarBackground};`);
+    lines.push(`  --ion-tab-bar-border-color: ${theme.tabBarBorderColor};`);
+    lines.push(`  --ion-tab-bar-color: ${theme.tabBarColor};`);
+    lines.push(`  --ion-tab-bar-color-selected: ${theme.tabBarColorSelected};`);
+    lines.push('');
+    lines.push('  /* Other */');
+    lines.push(`  --ion-backdrop-color: ${theme.backdropColor};`);
+    lines.push(`  --ion-backdrop-opacity: ${theme.backdropOpacity};`);
+    lines.push(`  --ion-overlay-background-color: ${theme.overlayBackground};`);
+    lines.push(`  --ion-border-color: ${theme.borderColor};`);
+    lines.push(`  --ion-placeholder-color: ${theme.placeholderColor};`);
+
+    // Stepped colors
+    const bgSteps = generateSteppedColors(theme.backgroundColor, theme.textColor);
+    const textSteps = generateSteppedColors(theme.textColor, theme.backgroundColor);
+    lines.push('');
+    lines.push('  /* Stepped Background Colors */');
+    for (const [step, color] of Object.entries(bgSteps)) {
+      lines.push(`  --ion-background-color-step-${step}: ${color};`);
+    }
+    lines.push('');
+    lines.push('  /* Stepped Text Colors */');
+    for (const [step, color] of Object.entries(textSteps)) {
+      lines.push(`  --ion-text-color-step-${step}: ${color};`);
+    }
+
     lines.push('}');
+
+    // Dark mode
+    if (dark.enabled) {
+      lines.push('');
+      lines.push('/* Dark Mode */');
+
+      const darkSelector = this.getDarkSelector(dark.strategy);
+      const darkSelectorEnd = this.getDarkSelectorEnd(dark.strategy);
+
+      lines.push(darkSelector);
+
+      for (const name of IONIC_COLOR_NAMES) {
+        const hex = dark.colors[name];
+        if (!hex) continue;
+        const vars = generateIonicColorVariables(name, hex);
+        lines.push('');
+        lines.push(`  /** ${name} **/`);
+        for (const [varName, varValue] of Object.entries(vars)) {
+          lines.push(`  ${varName}: ${varValue};`);
+        }
+      }
+
+      lines.push('');
+      lines.push('  /* Dark Application Colors */');
+      lines.push(`  --ion-background-color: ${dark.backgroundColor};`);
+      lines.push(`  --ion-background-color-rgb: ${hexToRgbString(dark.backgroundColor)};`);
+      lines.push(`  --ion-text-color: ${dark.textColor};`);
+      lines.push(`  --ion-text-color-rgb: ${hexToRgbString(dark.textColor)};`);
+      lines.push('');
+      lines.push(`  --ion-toolbar-background: ${dark.toolbarBackground};`);
+      lines.push(`  --ion-toolbar-color: ${dark.toolbarColor};`);
+      lines.push(`  --ion-toolbar-border-color: ${dark.toolbarBorderColor};`);
+      lines.push(`  --ion-item-background: ${dark.itemBackground};`);
+      lines.push(`  --ion-item-border-color: ${dark.itemBorderColor};`);
+      lines.push(`  --ion-card-background: ${dark.cardBackground};`);
+      lines.push(`  --ion-border-color: ${dark.borderColor};`);
+      lines.push(`  --ion-tab-bar-background: ${dark.tabBarBackground};`);
+      lines.push(`  --ion-tab-bar-color: ${dark.tabBarColor};`);
+      lines.push(`  --ion-tab-bar-color-selected: ${dark.tabBarColorSelected};`);
+
+      // Dark stepped colors
+      const darkBgSteps = generateSteppedColors(dark.backgroundColor, dark.textColor);
+      const darkTextSteps = generateSteppedColors(dark.textColor, dark.backgroundColor);
+      lines.push('');
+      lines.push('  /* Stepped Background Colors (Dark) */');
+      for (const [step, color] of Object.entries(darkBgSteps)) {
+        lines.push(`  --ion-background-color-step-${step}: ${color};`);
+      }
+      lines.push('');
+      lines.push('  /* Stepped Text Colors (Dark) */');
+      for (const [step, color] of Object.entries(darkTextSteps)) {
+        lines.push(`  --ion-text-color-step-${step}: ${color};`);
+      }
+
+      lines.push(darkSelectorEnd);
+    }
 
     // Per-component variables
     const hasComponentOverrides = components.some((c) =>
@@ -138,5 +269,27 @@ export class ThemeService {
     }
 
     return lines.join('\n');
+  }
+
+  private getDarkSelector(strategy: DarkModeStrategy): string {
+    switch (strategy) {
+      case 'always':
+        return ':root {';
+      case 'system':
+        return '@media (prefers-color-scheme: dark) {\n  :root {';
+      case 'class':
+        return ':root.ion-palette-dark {';
+    }
+  }
+
+  private getDarkSelectorEnd(strategy: DarkModeStrategy): string {
+    switch (strategy) {
+      case 'always':
+        return '}';
+      case 'system':
+        return '  }\n}';
+      case 'class':
+        return '}';
+    }
   }
 }
