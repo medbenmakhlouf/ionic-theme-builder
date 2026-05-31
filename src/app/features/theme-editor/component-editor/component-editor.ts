@@ -17,8 +17,22 @@ import {
   imports: [FormsModule],
   template: `
     <section class="space-y-4">
-      <h2 class="text-base font-semibold text-gray-900">Component Overrides</h2>
-      <p class="text-xs text-gray-400">Customize CSS variables per Ionic component.</p>
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-semibold text-gray-900">Component Overrides</h2>
+          <p class="text-xs text-gray-400">Customize CSS variables per Ionic component.</p>
+        </div>
+        <label class="flex items-center gap-1.5 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            [ngModel]="themeService.useTailwind()"
+            (ngModelChange)="themeService.toggleTailwind($event)"
+            class="w-3.5 h-3.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+            aria-label="Use Tailwind CSS variables"
+          />
+          <span class="text-[11px] font-medium text-gray-600">Tailwind v4</span>
+        </label>
+      </div>
 
       <div class="space-y-1.5">
         @for (component of themeService.componentThemes(); track component.componentName) {

@@ -12,6 +12,7 @@ import {
   IonicColorName,
   IonicMode,
   ThemeMode,
+  getTailwindTokens,
 } from '../models/theme.model';
 import {
   generateIonicColorVariables,
@@ -24,6 +25,7 @@ export class ThemeService {
   readonly mode = signal<ThemeMode>('light');
   readonly globalMode = signal<IonicMode>('all');
   readonly previewPlatform = signal<'ios' | 'md'>('ios');
+  readonly useTailwind = signal(false);
   readonly globalTheme = signal<GlobalThemeConfig>({ ...DEFAULT_GLOBAL_THEME });
   readonly darkTheme = signal<DarkModeConfig>(structuredClone(DEFAULT_DARK_THEME));
   readonly componentThemes = signal<ComponentThemeConfig[]>(
@@ -127,6 +129,113 @@ export class ThemeService {
         theme.componentName === componentName ? { ...theme, mode } : theme
       )
     );
+  }
+
+  toggleTailwind(enabled: boolean): void {
+    this.useTailwind.set(enabled);
+    if (enabled) {
+      this.convertAllToTailwind();
+    } else {
+      this.convertAllToRaw();
+    }
+  }
+
+  private convertAllToTailwind(): void {
+    this.componentThemes.update((themes) =>
+      themes.map((theme) => ({
+        ...theme,
+        variables: theme.variables.map((v) => {
+          const tokens = getTailwindTokens(v.name);
+          if (!tokens) return v;
+          const closest = this.findClosestToken(v.value, tokens);
+          return closest ? { ...v, value: closest } : v;
+        }),
+      }))
+    );
+  }
+
+  private convertAllToRaw(): void {
+    // Revert to original default values
+    const originals = IONIC_COMPONENTS;
+    this.componentThemes.update((themes) =>
+      themes.map((theme) => {
+        const original = originals.find(
+          (c) => c.componentName === theme.componentName
+        );
+        if (!original) return theme;
+        return {
+          ...theme,
+          variables: theme.variables.map((v) => {
+            const orig = original.variables.find((ov) => ov.name === v.name);
+            // Only revert if current value is a var() token
+            if (orig && v.value.startsWith('var(')) {
+              return { ...v, value: orig.value };
+            }
+            return v;
+          }),
+        };
+      })
+    );
+  }
+
+  private findClosestToken(
+    rawValue: string,
+    tokens: { value: string; description: string }[]
+  ): string | null {
+    // If already a token, keep it
+    if (rawValue.startsWith('var(') || rawValue === 'calc(infinity * 1px)') {
+      return tokens.find((t) => t.value === rawValue)?.value ?? null;
+    }
+
+    // Special cases
+    if (rawValue === 'none' || rawValue === '0 0 #0000') {
+      const none = tokens.find(
+        (t) => t.value === '0 0 #0000' || t.value === '0'
+      );
+      return none?.value ?? null;
+    }
+
+    // Parse numeric value in px
+    const num = parseFloat(rawValue);
+    if (isNaN(num)) return null;
+
+    // Convert rem to px for comparison
+    let px = num;
+    if (rawValue.trim().endsWith('rem')) {
+      px = num * 16;
+    }
+
+    // Find closest token by comparing description px values
+    let bestMatch: string | null = null;
+    let bestDiff = Infinity;
+
+    for (const token of tokens) {
+      const descPx = this.extractPxFromDescription(token.description);
+      if (descPx === null) continue;
+      const diff = Math.abs(px - descPx);
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        bestMatch = token.value;
+      }
+    }
+
+    return bestMatch;
+  }
+
+  private extractPxFromDescription(description: string): number | null {
+    // Match patterns like "0.5rem (8px)" or "8px" or "0"
+    const pxMatch = description.match(/\((\d+(?:\.\d+)?)px\)/);
+    if (pxMatch) return parseFloat(pxMatch[1]);
+
+    const directPx = description.match(/^(\d+(?:\.\d+)?)px$/);
+    if (directPx) return parseFloat(directPx[1]);
+
+    const remMatch = description.match(/^(\d+(?:\.\d+)?)rem/);
+    if (remMatch) return parseFloat(remMatch[1]) * 16;
+
+    if (description === '0') return 0;
+
+    return null;
   }
 
   private buildCss(): string {
