@@ -3,95 +3,33 @@ import {
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
+  effect,
+  ElementRef,
   inject,
-  signal,
+  viewChild,
 } from '@angular/core';
 import { ThemeService } from '../../core/services/theme.service';
 import { generateIonicColorVariables } from '../../core/utils/color.utils';
 import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
+import { IonButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-preview',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports:[IonButton],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <section class="h-full flex flex-col">
-      <!-- Preview controls -->
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-base font-semibold text-gray-900">Live Preview</h2>
-        <div class="flex items-center gap-3">
-          <!-- Platform toggle -->
-          <div class="flex items-center bg-gray-100 rounded-xl p-1 shadow-inner">
-            <button
-              type="button"
-              class="px-4 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer"
-              [class]="previewPlatform() === 'ios'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'"
-              (click)="previewPlatform.set('ios')"
-              aria-label="iOS preview"
-            >
-               iOS
-            </button>
-            <button
-              type="button"
-              class="px-4 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer"
-              [class]="previewPlatform() === 'md'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'"
-              (click)="previewPlatform.set('md')"
-              aria-label="Material Design preview"
-            >
-              🤖 Material
-            </button>
-          </div>
-
-          <!-- Divider -->
-          <div class="w-px h-7 bg-gray-300"></div>
-
-          <!-- Theme toggle -->
-          <div class="flex items-center bg-gray-100 rounded-xl p-1 shadow-inner">
-            <button
-              type="button"
-              class="px-4 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer"
-              [class]="previewMode() === 'light'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'"
-              (click)="previewMode.set('light')"
-              aria-label="Light theme preview"
-            >
-              ☀️ Light
-            </button>
-            <button
-              type="button"
-              class="px-4 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer"
-              [class]="previewMode() === 'dark'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'"
-              (click)="previewMode.set('dark')"
-              aria-label="Dark theme preview"
-            >
-              🌙 Dark
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!--
-        Preview container: Phone frame mockup with scrollable content.
-        Using @if to force destroy/recreate of Ionic web components
-        when platform changes, since Ionic components only read 'mode' at initialization.
-      -->
       <div class="flex-1 flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl border border-gray-200 shadow-sm py-6">
         <!-- Phone frame -->
         <div
           class="relative mx-auto w-[375px] h-[750px] shrink-0 overflow-hidden bg-black ring-2 ring-gray-900 shadow-2xl"
-          [class]="previewPlatform() === 'ios'
+          [class]="platform() === 'ios'
             ? 'rounded-[44px] ring-[3px] ring-gray-500/50'
             : 'rounded-[32px] ring-2 ring-gray-700'"
         >
           <!-- iOS Dynamic Island notch -->
-          @if (previewPlatform() === 'ios') {
+          @if (platform() === 'ios') {
             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[126px] h-[34px] bg-black rounded-b-[20px] z-10 flex items-center justify-center">
               <div class="w-[12px] h-[12px] rounded-full bg-gray-900/80"></div>
             </div>
@@ -103,10 +41,10 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
           <!-- Phone screen -->
           <div
             class="absolute inset-0 overflow-y-auto overflow-x-hidden rounded-[inherit]"
-            [class]="previewPlatform() === 'ios' ? 'pt-11' : 'pt-7'"
+            [class]="platform() === 'ios' ? 'pt-11' : 'pt-7'"
             [style]="previewStyles()"
           >
-          @if (previewPlatform() === 'ios') {
+          @if (platform() === 'ios') {
             <div class="ionic-preview p-5 space-y-6 pb-10">
               <ion-toolbar mode="ios">
               <ion-title>My App</ion-title>
@@ -350,7 +288,7 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
           </div>
 
           <!-- Home indicator / Nav bar -->
-          @if (previewPlatform() === 'ios') {
+          @if (platform() === 'ios') {
             <div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/30 rounded-full z-10"></div>
           } @else {
             <div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-24 h-1 bg-white/25 rounded-full z-10"></div>
@@ -361,12 +299,11 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
   `,
 })
 export class PreviewComponent {
-  private readonly themeService = inject(ThemeService);
-  protected readonly previewMode = signal<'light' | 'dark'>('light');
-  protected readonly previewPlatform = signal<'ios' | 'md'>('ios');
+  protected readonly themeService = inject(ThemeService);
+  protected readonly platform = this.themeService.previewPlatform;
 
   protected readonly previewStyles = computed(() => {
-    const mode = this.previewMode();
+    const mode = this.themeService.mode();
     const theme = this.themeService.globalTheme();
     const dark = this.themeService.darkTheme();
     const isDark = mode === 'dark' && dark.enabled;
@@ -412,5 +349,32 @@ export class PreviewComponent {
     styles.push(`--ion-backdrop-opacity: ${theme.backdropOpacity}`);
 
     return styles.join('; ');
+  });
+
+  protected readonly componentStyleBlock = computed(() => {
+    const components = this.themeService.componentThemes();
+    const currentPlatform = this.platform();
+    const lines: string[] = [];
+
+    for (const component of components) {
+      const overrides = component.variables.filter(
+        (v) => v.value !== v.defaultValue
+      );
+      if (overrides.length === 0) continue;
+
+      const selector =
+        component.mode === 'all' || component.mode === currentPlatform
+          ? component.componentName
+          : null;
+      if (!selector) continue;
+
+      lines.push(`${selector} {`);
+      for (const variable of overrides) {
+        lines.push(`  ${variable.name}: ${variable.value};`);
+      }
+      lines.push('}');
+    }
+
+    return lines.join('\n');
   });
 }
