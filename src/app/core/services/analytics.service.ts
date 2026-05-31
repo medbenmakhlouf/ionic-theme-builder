@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { Injectable, inject, isDevMode } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
@@ -7,12 +8,15 @@ declare let gtag: (...args: unknown[]) => void;
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
   private readonly router = inject(Router);
+  private readonly document = inject(DOCUMENT);
   private readonly trackingId = isDevMode() ? 'G-XXXXXXXXXX' : 'G-0S96RRYDWK';
 
   init(): void {
     if (!this.trackingId || this.trackingId === 'G-XXXXXXXXXX') {
       return;
     }
+
+    this.loadGtagScript();
 
     // Track page navigations
     this.router.events
@@ -34,5 +38,24 @@ export class AnalyticsService {
       event_label: label,
       value,
     });
+  }
+
+  private loadGtagScript(): void {
+    const win = this.document.defaultView as unknown as Record<string, unknown> | null;
+    if (!win) return;
+
+    // Initialize dataLayer and gtag function
+    win['dataLayer'] = win['dataLayer'] || [];
+    win['gtag'] = function (...args: unknown[]) {
+      (win['dataLayer'] as unknown[]).push(args);
+    };
+    gtag('js', new Date());
+    gtag('config', this.trackingId);
+
+    // Load the gtag.js script async
+    const script = this.document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${this.trackingId}`;
+    this.document.head.appendChild(script);
   }
 }
