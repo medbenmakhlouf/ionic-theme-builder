@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../../core/services/theme.service';
 import {
@@ -46,15 +41,22 @@ import {
             class="sr-only peer"
             aria-label="Enable dark mode"
           />
-          <div class="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-indigo-500 transition-colors"></div>
-          <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform peer-checked:translate-x-4"></div>
+          <div
+            class="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-indigo-500 transition-colors"
+          ></div>
+          <div
+            class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform peer-checked:translate-x-4"
+          ></div>
         </div>
       </label>
 
       @if (darkTheme().enabled) {
         <!-- Strategy -->
         <div class="space-y-2">
-          <label for="dark-strategy" class="text-xs font-semibold uppercase tracking-wider text-gray-400">
+          <label
+            for="dark-strategy"
+            class="text-xs font-semibold uppercase tracking-wider text-gray-400"
+          >
             Strategy
           </label>
           <select
@@ -70,9 +72,15 @@ import {
           </select>
           <p class="text-xs text-gray-400 italic px-1">
             @switch (darkTheme().strategy) {
-              @case ('system') { Uses OS/browser preference automatically. }
-              @case ('class') { Activated via .ion-palette-dark class on html. }
-              @case ('always') { Replaces light theme entirely. }
+              @case ('system') {
+                Uses OS/browser preference automatically.
+              }
+              @case ('class') {
+                Activated via .ion-palette-dark class on html.
+              }
+              @case ('always') {
+                Replaces light theme entirely.
+              }
             }
           </p>
         </div>
@@ -84,7 +92,9 @@ import {
           </p>
           <div class="space-y-1">
             @for (color of colorNames; track color) {
-              <div class="flex items-center gap-3 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
+              <div
+                class="flex items-center gap-3 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+              >
                 <input
                   [id]="'dark-color-' + color"
                   type="color"
@@ -118,7 +128,9 @@ import {
           </p>
           <div class="space-y-1">
             @for (prop of darkProperties; track prop.key) {
-              <div class="flex items-center gap-3 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
+              <div
+                class="flex items-center gap-3 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+              >
                 <input
                   [id]="'dark-' + prop.key"
                   type="color"

@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
@@ -17,9 +12,11 @@ import { ThemeService } from '../../core/services/theme.service';
         <button
           type="button"
           class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer"
-          [class]="copied()
-            ? 'bg-green-100 text-green-700 border border-green-200'
-            : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm'"
+          [class]="
+            copied()
+              ? 'bg-green-100 text-green-700 border border-green-200'
+              : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm'
+          "
           (click)="copyToClipboard()"
           [attr.aria-label]="copied() ? 'Copied!' : 'Copy CSS to clipboard'"
         >
@@ -42,7 +39,8 @@ import { ThemeService } from '../../core/services/theme.service';
         role="region"
         aria-label="Generated CSS output"
         tabindex="0"
-      >{{ css() }}</pre>
+        >{{ css() }}</pre
+      >
     </div>
   `,
 })

@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../../core/services/theme.service';
 import {
@@ -78,12 +72,17 @@ import {
         </div>
 
         @if (themeService.customColors().length === 0) {
-          <p class="text-xs text-gray-400 px-3">No custom colors added yet. Custom colors generate <code class="bg-gray-100 px-1 rounded">ion-color-*</code> utility classes.</p>
+          <p class="text-xs text-gray-400 px-3">
+            No custom colors added yet. Custom colors generate
+            <code class="bg-gray-100 px-1 rounded">ion-color-*</code> utility classes.
+          </p>
         }
 
         <div class="space-y-2">
           @for (custom of themeService.customColors(); track $index) {
-            <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-100">
+            <div
+              class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-100"
+            >
               <input
                 type="color"
                 [ngModel]="custom.value"
@@ -94,7 +93,9 @@ import {
               <input
                 type="text"
                 [ngModel]="custom.name"
-                (ngModelChange)="themeService.updateCustomColor($index, { name: sanitizeName($event) })"
+                (ngModelChange)="
+                  themeService.updateCustomColor($index, { name: sanitizeName($event) })
+                "
                 placeholder="color-name"
                 class="w-24 text-xs font-mono px-2 py-1.5 border border-gray-200 rounded-md bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all"
                 [attr.aria-label]="'Custom color name'"
@@ -113,7 +114,12 @@ import {
                 [attr.aria-label]="'Remove custom color ' + custom.name"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -183,9 +189,7 @@ export class GlobalColorsComponent {
   protected readonly themeService = inject(ThemeService);
   protected readonly colorNames: IonicColorName[] = [...IONIC_COLOR_NAMES];
   protected readonly globalTheme = this.themeService.globalTheme;
-  protected readonly colors = computed(
-    () => this.themeService.globalTheme().colors
-  );
+  protected readonly colors = computed(() => this.themeService.globalTheme().colors);
 
   private colorCounter = signal(0);
 
@@ -197,12 +201,20 @@ export class GlobalColorsComponent {
   }
 
   protected sanitizeName(name: string): string {
-    return name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
   }
 
   protected readonly propertyGroups: {
     title: string;
-    items: { key: keyof Omit<GlobalThemeConfig, 'colors'>; label: string; type: 'color' | 'text' }[];
+    items: {
+      key: keyof Omit<GlobalThemeConfig, 'colors'>;
+      label: string;
+      type: 'color' | 'text';
+    }[];
   }[] = [
     {
       title: 'Layout',

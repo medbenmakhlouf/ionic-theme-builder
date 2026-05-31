@@ -31,9 +31,7 @@ export class ThemeService {
   readonly activePreset = signal<string>('default');
   readonly globalTheme = signal<GlobalThemeConfig>({ ...DEFAULT_GLOBAL_THEME });
   readonly darkTheme = signal<DarkModeConfig>(structuredClone(DEFAULT_DARK_THEME));
-  readonly componentThemes = signal<ComponentThemeConfig[]>(
-    structuredClone(IONIC_COMPONENTS)
-  );
+  readonly componentThemes = signal<ComponentThemeConfig[]>(structuredClone(IONIC_COMPONENTS));
   readonly customColors = signal<CustomColor[]>([]);
 
   readonly presets = THEME_PRESETS;
@@ -67,7 +65,7 @@ export class ThemeService {
 
   updateCustomColor(index: number, updates: Partial<CustomColor>): void {
     this.customColors.update((colors) =>
-      colors.map((c, i) => (i === index ? { ...c, ...updates } : c))
+      colors.map((c, i) => (i === index ? { ...c, ...updates } : c)),
     );
   }
 
@@ -75,10 +73,7 @@ export class ThemeService {
     this.customColors.update((colors) => colors.filter((_, i) => i !== index));
   }
 
-  updateGlobalProperty(
-    key: keyof Omit<GlobalThemeConfig, 'colors'>,
-    value: string
-  ): void {
+  updateGlobalProperty(key: keyof Omit<GlobalThemeConfig, 'colors'>, value: string): void {
     this.globalTheme.update((theme) => ({
       ...theme,
       [key]: value,
@@ -103,26 +98,20 @@ export class ThemeService {
 
   updateDarkProperty(
     key: keyof Omit<DarkModeConfig, 'colors' | 'enabled' | 'strategy'>,
-    value: string
+    value: string,
   ): void {
     this.darkTheme.update((t) => ({ ...t, [key]: value }));
   }
 
-  updateComponentVariable(
-    componentName: string,
-    variableName: string,
-    value: string
-  ): void {
+  updateComponentVariable(componentName: string, variableName: string, value: string): void {
     this.componentThemes.update((themes) =>
       themes.map((theme) => {
         if (theme.componentName !== componentName) return theme;
         return {
           ...theme,
-          variables: theme.variables.map((v) =>
-            v.name === variableName ? { ...v, value } : v
-          ),
+          variables: theme.variables.map((v) => (v.name === variableName ? { ...v, value } : v)),
         };
-      })
+      }),
     );
   }
 
@@ -138,11 +127,9 @@ export class ThemeService {
     this.componentThemes.update((themes) =>
       themes.map((theme) => {
         if (theme.componentName !== componentName) return theme;
-        const original = IONIC_COMPONENTS.find(
-          (c) => c.componentName === componentName
-        );
+        const original = IONIC_COMPONENTS.find((c) => c.componentName === componentName);
         return original ? structuredClone(original) : theme;
-      })
+      }),
     );
   }
 
@@ -159,9 +146,7 @@ export class ThemeService {
 
   updateComponentMode(componentName: string, mode: IonicMode): void {
     this.componentThemes.update((themes) =>
-      themes.map((theme) =>
-        theme.componentName === componentName ? { ...theme, mode } : theme
-      )
+      themes.map((theme) => (theme.componentName === componentName ? { ...theme, mode } : theme)),
     );
   }
 
@@ -184,7 +169,7 @@ export class ThemeService {
           const closest = this.findClosestToken(v.value, tokens);
           return closest ? { ...v, value: closest } : v;
         }),
-      }))
+      })),
     );
   }
 
@@ -193,9 +178,7 @@ export class ThemeService {
     const originals = IONIC_COMPONENTS;
     this.componentThemes.update((themes) =>
       themes.map((theme) => {
-        const original = originals.find(
-          (c) => c.componentName === theme.componentName
-        );
+        const original = originals.find((c) => c.componentName === theme.componentName);
         if (!original) return theme;
         return {
           ...theme,
@@ -208,13 +191,13 @@ export class ThemeService {
             return v;
           }),
         };
-      })
+      }),
     );
   }
 
   private findClosestToken(
     rawValue: string,
-    tokens: { value: string; description: string }[]
+    tokens: { value: string; description: string }[],
   ): string | null {
     // If already a token, keep it
     if (rawValue.startsWith('var(') || rawValue === 'calc(infinity * 1px)') {
@@ -223,9 +206,7 @@ export class ThemeService {
 
     // Special cases
     if (rawValue === 'none' || rawValue === '0 0 #0000') {
-      const none = tokens.find(
-        (t) => t.value === '0 0 #0000' || t.value === '0'
-      );
+      const none = tokens.find((t) => t.value === '0 0 #0000' || t.value === '0');
       return none?.value ?? null;
     }
 
@@ -422,8 +403,8 @@ export class ThemeService {
     }
 
     // Per-component variables with mode support
-    const componentsToOutput = components.filter((c) =>
-      c.mode !== 'all' || c.variables.some((v) => v.value !== v.defaultValue)
+    const componentsToOutput = components.filter(
+      (c) => c.mode !== 'all' || c.variables.some((v) => v.value !== v.defaultValue),
     );
 
     if (componentsToOutput.length > 0) {
@@ -431,13 +412,9 @@ export class ThemeService {
       lines.push('/* Component-Specific Overrides */');
 
       for (const component of componentsToOutput) {
-        const overrides = component.variables.filter(
-          (v) => v.value !== v.defaultValue
-        );
+        const overrides = component.variables.filter((v) => v.value !== v.defaultValue);
         // If mode is non-default, always output the block (even with defaults)
-        const variablesToOutput = component.mode !== 'all'
-          ? component.variables
-          : overrides;
+        const variablesToOutput = component.mode !== 'all' ? component.variables : overrides;
         if (variablesToOutput.length === 0) continue;
 
         const selector = this.getComponentSelector(component.componentName, component.mode);

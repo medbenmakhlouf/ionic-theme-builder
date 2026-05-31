@@ -1,15 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../../core/services/theme.service';
-import {
-  getTailwindTokens,
-  TailwindToken,
-} from '../../../core/models/theme.model';
+import { getTailwindTokens, TailwindToken } from '../../../core/models/theme.model';
 
 @Component({
   selector: 'app-component-editor',
@@ -49,17 +41,23 @@ import {
                 class="text-[10px] text-gray-400 transition-transform duration-200"
                 [class.rotate-90]="expandedComponent() === component.componentName"
                 aria-hidden="true"
-              >▶</span>
+                >▶</span
+              >
               <span class="flex-1 text-left text-sm font-medium text-gray-800">
                 {{ component.label }}
               </span>
               @if (component.mode !== 'all') {
-                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 uppercase">
+                <span
+                  class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 uppercase"
+                >
                   {{ component.mode }}
                 </span>
               }
               @if (hasOverrides(component.variables)) {
-                <span class="w-2 h-2 rounded-full bg-indigo-400" aria-label="Has custom values"></span>
+                <span
+                  class="w-2 h-2 rounded-full bg-indigo-400"
+                  aria-label="Has custom values"
+                ></span>
               }
             </button>
 
@@ -72,7 +70,9 @@ import {
                 <!-- Mode + Reset row -->
                 <div class="flex items-center justify-between py-1">
                   <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Mode:</span>
+                    <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400"
+                      >Mode:</span
+                    >
                     <select
                       [id]="'mode-' + component.componentName"
                       [value]="component.mode"
@@ -128,17 +128,15 @@ import {
                           <select
                             [ngModel]="resolveTokenValue(variable.value, tokens)"
                             (ngModelChange)="
-                              onTokenChange(
-                                component.componentName,
-                                variable.name,
-                                $event
-                              )
+                              onTokenChange(component.componentName, variable.name, $event)
                             "
                             class="w-[5.5rem] text-xs border border-gray-200 rounded-md px-1.5 py-1 bg-gray-50 focus:border-indigo-400 cursor-pointer"
                             [attr.aria-label]="variable.label + ' token'"
                           >
                             @for (token of tokens; track token.value) {
-                              <option [value]="token.value">{{ token.label }} · {{ token.description }}</option>
+                              <option [value]="token.value">
+                                {{ token.label }} · {{ token.description }}
+                              </option>
                             }
                             <option value="__custom__">Custom</option>
                           </select>
@@ -223,17 +221,15 @@ import {
                           <select
                             [ngModel]="resolveTokenValue(variable.value, tokens)"
                             (ngModelChange)="
-                              onTokenChange(
-                                component.componentName,
-                                variable.name,
-                                $event
-                              )
+                              onTokenChange(component.componentName, variable.name, $event)
                             "
                             class="w-[5.5rem] text-xs border border-gray-200 rounded-md px-1.5 py-1 bg-gray-50 focus:border-indigo-400 cursor-pointer"
                             [attr.aria-label]="variable.label + ' token'"
                           >
                             @for (token of tokens; track token.value) {
-                              <option [value]="token.value">{{ token.label }} · {{ token.description }}</option>
+                              <option [value]="token.value">
+                                {{ token.label }} · {{ token.description }}
+                              </option>
                             }
                             <option value="__custom__">Custom</option>
                           </select>
@@ -286,9 +282,7 @@ export class ComponentEditorComponent {
   protected readonly expandedComponent = signal<string | null>(null);
 
   protected toggleComponent(name: string): void {
-    this.expandedComponent.update((current) =>
-      current === name ? null : name
-    );
+    this.expandedComponent.update((current) => (current === name ? null : name));
   }
 
   protected onComponentModeChange(componentName: string, event: Event): void {
@@ -313,11 +307,7 @@ export class ComponentEditorComponent {
     return !tokens.some((t) => t.value === value);
   }
 
-  protected onTokenChange(
-    componentName: string,
-    variableName: string,
-    tokenValue: string
-  ): void {
+  protected onTokenChange(componentName: string, variableName: string, tokenValue: string): void {
     if (tokenValue === '__custom__') {
       this.themeService.updateComponentVariable(componentName, variableName, '0px');
     } else {
@@ -339,17 +329,21 @@ export class ComponentEditorComponent {
     componentName: string,
     variableName: string,
     numericValue: number,
-    currentValue: string
+    currentValue: string,
   ): void {
     const unit = this.parseUnit(currentValue);
-    this.themeService.updateComponentVariable(componentName, variableName, `${numericValue}${unit}`);
+    this.themeService.updateComponentVariable(
+      componentName,
+      variableName,
+      `${numericValue}${unit}`,
+    );
   }
 
   protected onSizeUnitChange(
     componentName: string,
     variableName: string,
     newUnit: 'px' | 'rem',
-    currentValue: string
+    currentValue: string,
   ): void {
     const num = this.parseNumericValue(currentValue);
     this.themeService.updateComponentVariable(componentName, variableName, `${num}${newUnit}`);

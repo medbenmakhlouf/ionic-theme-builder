@@ -42,11 +42,7 @@ export function hexToRgbString(hex: string): string {
 export function generateShade(hex: string): string {
   const rgb = hexToRgb(hex);
   if (!rgb) return hex;
-  return rgbToHex(
-    Math.round(rgb.r * 0.88),
-    Math.round(rgb.g * 0.88),
-    Math.round(rgb.b * 0.88)
-  );
+  return rgbToHex(Math.round(rgb.r * 0.88), Math.round(rgb.g * 0.88), Math.round(rgb.b * 0.88));
 }
 
 /**
@@ -59,7 +55,7 @@ export function generateTint(hex: string): string {
   return rgbToHex(
     Math.round(rgb.r + (255 - rgb.r) * 0.1),
     Math.round(rgb.g + (255 - rgb.g) * 0.1),
-    Math.round(rgb.b + (255 - rgb.b) * 0.1)
+    Math.round(rgb.b + (255 - rgb.b) * 0.1),
   );
 }
 
@@ -78,10 +74,7 @@ export function generateContrast(hex: string): string {
 /**
  * Generates the full set of Ionic color variables for a given color.
  */
-export function generateIonicColorVariables(
-  name: string,
-  hex: string
-): Record<string, string> {
+export function generateIonicColorVariables(name: string, hex: string): Record<string, string> {
   const contrast = generateContrast(hex);
   return {
     [`--ion-color-${name}`]: hex,
@@ -98,10 +91,7 @@ export function generateIonicColorVariables(
  * Ionic uses steps from 50 to 950 in increments of 50.
  * Each step is a percentage mix toward the target.
  */
-export function generateSteppedColors(
-  base: string,
-  target: string
-): Record<string, string> {
+export function generateSteppedColors(base: string, target: string): Record<string, string> {
   const baseRgb = hexToRgb(base);
   const targetRgb = hexToRgb(target);
   if (!baseRgb || !targetRgb) return {};
@@ -116,4 +106,3 @@ export function generateSteppedColors(
   }
   return steps;
 }
-
