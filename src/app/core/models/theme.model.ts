@@ -68,6 +68,55 @@ export type ThemeMode = 'light' | 'dark';
 export type DarkModeStrategy = 'always' | 'system' | 'class';
 export type IonicMode = 'all' | 'ios' | 'md';
 
+export interface TailwindToken {
+  label: string;
+  value: string;
+  description: string;
+}
+
+export const TAILWIND_RADIUS_TOKENS: TailwindToken[] = [
+  { label: 'none', value: '0', description: '0' },
+  { label: 'xs', value: 'var(--radius-xs)', description: '0.125rem (2px)' },
+  { label: 'sm', value: 'var(--radius-sm)', description: '0.25rem (4px)' },
+  { label: 'md', value: 'var(--radius-md)', description: '0.375rem (6px)' },
+  { label: 'lg', value: 'var(--radius-lg)', description: '0.5rem (8px)' },
+  { label: 'xl', value: 'var(--radius-xl)', description: '0.75rem (12px)' },
+  { label: '2xl', value: 'var(--radius-2xl)', description: '1rem (16px)' },
+  { label: '3xl', value: 'var(--radius-3xl)', description: '1.5rem (24px)' },
+  { label: '4xl', value: 'var(--radius-4xl)', description: '2rem (32px)' },
+  { label: 'full', value: 'calc(infinity * 1px)', description: 'Full round' },
+];
+
+export const TAILWIND_SPACING_TOKENS: TailwindToken[] = [
+  { label: '0', value: 'var(--spacing-0)', description: '0' },
+  { label: 'px', value: 'var(--spacing-px)', description: '1px' },
+  { label: '0.5', value: 'var(--spacing-0_5)', description: '0.125rem (2px)' },
+  { label: '1', value: 'var(--spacing-1)', description: '0.25rem (4px)' },
+  { label: '1.5', value: 'var(--spacing-1_5)', description: '0.375rem (6px)' },
+  { label: '2', value: 'var(--spacing-2)', description: '0.5rem (8px)' },
+  { label: '2.5', value: 'var(--spacing-2_5)', description: '0.625rem (10px)' },
+  { label: '3', value: 'var(--spacing-3)', description: '0.75rem (12px)' },
+  { label: '4', value: 'var(--spacing-4)', description: '1rem (16px)' },
+  { label: '5', value: 'var(--spacing-5)', description: '1.25rem (20px)' },
+  { label: '6', value: 'var(--spacing-6)', description: '1.5rem (24px)' },
+  { label: '8', value: 'var(--spacing-8)', description: '2rem (32px)' },
+  { label: '10', value: 'var(--spacing-10)', description: '2.5rem (40px)' },
+  { label: '12', value: 'var(--spacing-12)', description: '3rem (48px)' },
+  { label: '14', value: 'var(--spacing-14)', description: '3.5rem (56px)' },
+  { label: '16', value: 'var(--spacing-16)', description: '4rem (64px)' },
+];
+
+/** Returns applicable Tailwind tokens for a CSS variable name, or null if none apply */
+export function getTailwindTokens(variableName: string): TailwindToken[] | null {
+  if (variableName.includes('border-radius')) return TAILWIND_RADIUS_TOKENS;
+  if (
+    variableName.includes('padding') ||
+    variableName.includes('margin') ||
+    variableName.includes('gap')
+  ) return TAILWIND_SPACING_TOKENS;
+  return null;
+}
+
 export const IONIC_COLOR_NAMES = [
   'primary',
   'secondary',

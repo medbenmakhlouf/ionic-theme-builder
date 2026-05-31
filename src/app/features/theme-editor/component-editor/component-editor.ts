@@ -6,6 +6,10 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../../core/services/theme.service';
+import {
+  getTailwindTokens,
+  TailwindToken,
+} from '../../../core/models/theme.model';
 
 @Component({
   selector: 'app-component-editor',
@@ -104,40 +108,100 @@ import { ThemeService } from '../../../core/services/theme.service';
                       {{ variable.label }}
                     </label>
                     @if (variable.type === 'size') {
-                      <div class="flex items-center gap-0.5">
-                        <input
-                          [id]="component.componentName + '-' + variable.name"
-                          type="number"
-                          [ngModel]="parseNumericValue(variable.value)"
-                          (ngModelChange)="
-                            onSizeValueChange(
-                              component.componentName,
-                              variable.name,
-                              $event,
-                              variable.value
-                            )
-                          "
-                          step="1"
-                          class="w-16 text-xs font-mono px-2 py-1 border border-gray-200 rounded-l-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          [attr.aria-label]="variable.label + ' numeric value'"
-                        />
-                        <select
-                          [ngModel]="parseUnit(variable.value)"
-                          (ngModelChange)="
-                            onSizeUnitChange(
-                              component.componentName,
-                              variable.name,
-                              $event,
-                              variable.value
-                            )
-                          "
-                          class="text-xs border border-l-0 border-gray-200 rounded-r-md px-1 py-1 bg-gray-50 focus:border-indigo-400 cursor-pointer"
-                          [attr.aria-label]="variable.label + ' unit'"
-                        >
-                          <option value="px">px</option>
-                          <option value="rem">rem</option>
-                        </select>
-                      </div>
+                      @if (getTokens(variable.name); as tokens) {
+                        <!-- Tailwind token mode -->
+                        <div class="flex items-center gap-1">
+                          <select
+                            [ngModel]="resolveTokenValue(variable.value, tokens)"
+                            (ngModelChange)="
+                              onTokenChange(
+                                component.componentName,
+                                variable.name,
+                                $event
+                              )
+                            "
+                            class="w-[5.5rem] text-xs border border-gray-200 rounded-md px-1.5 py-1 bg-gray-50 focus:border-indigo-400 cursor-pointer"
+                            [attr.aria-label]="variable.label + ' token'"
+                          >
+                            @for (token of tokens; track token.value) {
+                              <option [value]="token.value">{{ token.label }} · {{ token.description }}</option>
+                            }
+                            <option value="__custom__">Custom</option>
+                          </select>
+                          @if (isCustomValue(variable.value, tokens)) {
+                            <div class="flex items-center gap-0.5">
+                              <input
+                                [id]="component.componentName + '-' + variable.name"
+                                type="number"
+                                [ngModel]="parseNumericValue(variable.value)"
+                                (ngModelChange)="
+                                  onSizeValueChange(
+                                    component.componentName,
+                                    variable.name,
+                                    $event,
+                                    variable.value
+                                  )
+                                "
+                                step="1"
+                                class="w-14 text-xs font-mono px-1.5 py-1 border border-gray-200 rounded-l-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                [attr.aria-label]="variable.label + ' custom value'"
+                              />
+                              <select
+                                [ngModel]="parseUnit(variable.value)"
+                                (ngModelChange)="
+                                  onSizeUnitChange(
+                                    component.componentName,
+                                    variable.name,
+                                    $event,
+                                    variable.value
+                                  )
+                                "
+                                class="text-xs border border-l-0 border-gray-200 rounded-r-md px-1 py-1 bg-gray-50 focus:border-indigo-400 cursor-pointer"
+                                [attr.aria-label]="variable.label + ' unit'"
+                              >
+                                <option value="px">px</option>
+                                <option value="rem">rem</option>
+                              </select>
+                            </div>
+                          }
+                        </div>
+                      } @else {
+                        <!-- Plain numeric size (no tokens) -->
+                        <div class="flex items-center gap-0.5">
+                          <input
+                            [id]="component.componentName + '-' + variable.name"
+                            type="number"
+                            [ngModel]="parseNumericValue(variable.value)"
+                            (ngModelChange)="
+                              onSizeValueChange(
+                                component.componentName,
+                                variable.name,
+                                $event,
+                                variable.value
+                              )
+                            "
+                            step="1"
+                            class="w-16 text-xs font-mono px-2 py-1 border border-gray-200 rounded-l-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            [attr.aria-label]="variable.label + ' numeric value'"
+                          />
+                          <select
+                            [ngModel]="parseUnit(variable.value)"
+                            (ngModelChange)="
+                              onSizeUnitChange(
+                                component.componentName,
+                                variable.name,
+                                $event,
+                                variable.value
+                              )
+                            "
+                            class="text-xs border border-l-0 border-gray-200 rounded-r-md px-1 py-1 bg-gray-50 focus:border-indigo-400 cursor-pointer"
+                            [attr.aria-label]="variable.label + ' unit'"
+                          >
+                            <option value="px">px</option>
+                            <option value="rem">rem</option>
+                          </select>
+                        </div>
+                      }
                     } @else {
                       <input
                         [id]="component.componentName + '-' + variable.name"
@@ -181,6 +245,31 @@ export class ComponentEditorComponent {
 
   protected hasOverrides(variables: { value: string; defaultValue: string }[]): boolean {
     return variables.some((v) => v.value !== v.defaultValue);
+  }
+
+  protected getTokens(variableName: string): TailwindToken[] | null {
+    return getTailwindTokens(variableName);
+  }
+
+  protected resolveTokenValue(value: string, tokens: TailwindToken[]): string {
+    const match = tokens.find((t) => t.value === value);
+    return match ? match.value : '__custom__';
+  }
+
+  protected isCustomValue(value: string, tokens: TailwindToken[]): boolean {
+    return !tokens.some((t) => t.value === value);
+  }
+
+  protected onTokenChange(
+    componentName: string,
+    variableName: string,
+    tokenValue: string
+  ): void {
+    if (tokenValue === '__custom__') {
+      this.themeService.updateComponentVariable(componentName, variableName, '0px');
+    } else {
+      this.themeService.updateComponentVariable(componentName, variableName, tokenValue);
+    }
   }
 
   protected parseNumericValue(value: string): number {
