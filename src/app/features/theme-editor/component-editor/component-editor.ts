@@ -203,20 +203,59 @@ import {
                         </div>
                       }
                     } @else {
-                      <input
-                        [id]="component.componentName + '-' + variable.name"
-                        type="text"
-                        [ngModel]="variable.value"
-                        (ngModelChange)="
-                          themeService.updateComponentVariable(
-                            component.componentName,
-                            variable.name,
-                            $event
-                          )
-                        "
-                        class="w-[5.5rem] text-xs font-mono px-2 py-1 border border-gray-200 rounded-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all"
-                        [attr.aria-label]="variable.label + ' value'"
-                      />
+                      @if (getTokens(variable.name); as tokens) {
+                        <!-- Text variable with Tailwind tokens (e.g. box-shadow) -->
+                        <div class="flex items-center gap-1">
+                          <select
+                            [ngModel]="resolveTokenValue(variable.value, tokens)"
+                            (ngModelChange)="
+                              onTokenChange(
+                                component.componentName,
+                                variable.name,
+                                $event
+                              )
+                            "
+                            class="w-[5.5rem] text-xs border border-gray-200 rounded-md px-1.5 py-1 bg-gray-50 focus:border-indigo-400 cursor-pointer"
+                            [attr.aria-label]="variable.label + ' token'"
+                          >
+                            @for (token of tokens; track token.value) {
+                              <option [value]="token.value">{{ token.label }} · {{ token.description }}</option>
+                            }
+                            <option value="__custom__">Custom</option>
+                          </select>
+                          @if (isCustomValue(variable.value, tokens)) {
+                            <input
+                              [id]="component.componentName + '-' + variable.name"
+                              type="text"
+                              [ngModel]="variable.value"
+                              (ngModelChange)="
+                                themeService.updateComponentVariable(
+                                  component.componentName,
+                                  variable.name,
+                                  $event
+                                )
+                              "
+                              class="w-20 text-xs font-mono px-1.5 py-1 border border-gray-200 rounded-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all"
+                              [attr.aria-label]="variable.label + ' custom value'"
+                            />
+                          }
+                        </div>
+                      } @else {
+                        <input
+                          [id]="component.componentName + '-' + variable.name"
+                          type="text"
+                          [ngModel]="variable.value"
+                          (ngModelChange)="
+                            themeService.updateComponentVariable(
+                              component.componentName,
+                              variable.name,
+                              $event
+                            )
+                          "
+                          class="w-[5.5rem] text-xs font-mono px-2 py-1 border border-gray-200 rounded-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all"
+                          [attr.aria-label]="variable.label + ' value'"
+                        />
+                      }
                     }
                   </div>
                 }

@@ -106,6 +106,17 @@ export const TAILWIND_SPACING_TOKENS: TailwindToken[] = [
   { label: '16', value: 'var(--spacing-16)', description: '4rem (64px)' },
 ];
 
+export const TAILWIND_SHADOW_TOKENS: TailwindToken[] = [
+  { label: 'none', value: '0 0 #0000', description: 'No shadow' },
+  { label: '2xs', value: 'var(--shadow-2xs)', description: '0 1px rgb(0 0 0 / 0.05)' },
+  { label: 'xs', value: 'var(--shadow-xs)', description: '0 1px 2px 0 rgb(0 0 0 / 0.05)' },
+  { label: 'sm', value: 'var(--shadow-sm)', description: '0 1px 3px ...' },
+  { label: 'md', value: 'var(--shadow-md)', description: '0 4px 6px ...' },
+  { label: 'lg', value: 'var(--shadow-lg)', description: '0 10px 15px ...' },
+  { label: 'xl', value: 'var(--shadow-xl)', description: '0 20px 25px ...' },
+  { label: '2xl', value: 'var(--shadow-2xl)', description: '0 25px 50px ...' },
+];
+
 /** Returns applicable Tailwind tokens for a CSS variable name, or null if none apply */
 export function getTailwindTokens(variableName: string): TailwindToken[] | null {
   if (variableName.includes('border-radius')) return TAILWIND_RADIUS_TOKENS;
@@ -114,6 +125,7 @@ export function getTailwindTokens(variableName: string): TailwindToken[] | null 
     variableName.includes('margin') ||
     variableName.includes('gap')
   ) return TAILWIND_SPACING_TOKENS;
+  if (variableName.includes('box-shadow')) return TAILWIND_SHADOW_TOKENS;
   return null;
 }
 
