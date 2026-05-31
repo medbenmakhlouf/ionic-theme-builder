@@ -4,6 +4,7 @@ import {
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
   inject,
+  signal,
 } from '@angular/core';
 import { ThemeService } from '../../core/services/theme.service';
 import { generateIonicColorVariables } from '../../core/utils/color.utils';
@@ -18,6 +19,25 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
 export class PreviewComponent {
   protected readonly themeService = inject(ThemeService);
   protected readonly platform = this.themeService.previewPlatform;
+
+  // Overlay visibility signals
+  protected readonly showAlert = signal(false);
+  protected readonly showToast = signal(false);
+  protected readonly showActionSheet = signal(false);
+  protected readonly showModal = signal(false);
+  protected readonly showPopover = signal(false);
+
+  protected readonly alertButtons = [
+    { text: 'Cancel', role: 'cancel' },
+    { text: 'Delete', role: 'destructive' },
+  ];
+
+  protected readonly actionSheetButtons = [
+    { text: 'Share', icon: 'share-outline' },
+    { text: 'Copy Link', icon: 'link-outline' },
+    { text: 'Delete', role: 'destructive', icon: 'trash-outline' },
+    { text: 'Cancel', role: 'cancel', icon: 'close-outline' },
+  ];
 
   /** Returns a map of component name → CSS variable overrides as a style object */
   protected readonly componentStyles = computed(() => {

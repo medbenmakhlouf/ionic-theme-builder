@@ -570,6 +570,173 @@
             </div>
           </div>
 
+          <!-- ═══════ OVERLAYS ═══════ -->
+          <div class="space-y-2">
+            <h3 class="text-xs font-semibold uppercase tracking-wider px-1 opacity-60" style="color: var(--ion-text-color)">Overlays</h3>
+            <div class="flex flex-wrap gap-2 px-1">
+              @if (componentModes()['ion-alert'] === 'ios') {
+                <ion-button mode="ios" size="small" fill="outline" (click)="showAlert.set(true)" [style]="componentStyles()['ion-button']">Alert</ion-button>
+              } @else {
+                <ion-button mode="md" size="small" fill="outline" (click)="showAlert.set(true)" [style]="componentStyles()['ion-button']">Alert</ion-button>
+              }
+              @if (componentModes()['ion-toast'] === 'ios') {
+                <ion-button mode="ios" size="small" fill="outline" (click)="showToast.set(true)" [style]="componentStyles()['ion-button']">Toast</ion-button>
+              } @else {
+                <ion-button mode="md" size="small" fill="outline" (click)="showToast.set(true)" [style]="componentStyles()['ion-button']">Toast</ion-button>
+              }
+              @if (componentModes()['ion-action-sheet'] === 'ios') {
+                <ion-button mode="ios" size="small" fill="outline" (click)="showActionSheet.set(true)" [style]="componentStyles()['ion-button']">Action Sheet</ion-button>
+              } @else {
+                <ion-button mode="md" size="small" fill="outline" (click)="showActionSheet.set(true)" [style]="componentStyles()['ion-button']">Action Sheet</ion-button>
+              }
+              @if (componentModes()['ion-modal'] === 'ios') {
+                <ion-button mode="ios" size="small" fill="outline" (click)="showModal.set(true)" [style]="componentStyles()['ion-button']">Modal</ion-button>
+              } @else {
+                <ion-button mode="md" size="small" fill="outline" (click)="showModal.set(true)" [style]="componentStyles()['ion-button']">Modal</ion-button>
+              }
+              @if (componentModes()['ion-popover'] === 'ios') {
+                <ion-button mode="ios" size="small" fill="outline" id="popover-trigger-ios" [style]="componentStyles()['ion-button']">Popover</ion-button>
+              } @else {
+                <ion-button mode="md" size="small" fill="outline" id="popover-trigger-md" [style]="componentStyles()['ion-button']">Popover</ion-button>
+              }
+            </div>
+          </div>
+
+          <!-- Real Ionic Overlay Components -->
+          @if (componentModes()['ion-alert'] === 'ios') {
+            <ion-alert
+              mode="ios"
+              [isOpen]="showAlert()"
+              header="Confirm Action"
+              message="Are you sure you want to proceed?"
+              [buttons]="alertButtons"
+              [style]="componentStyles()['ion-alert']"
+              (didDismiss)="showAlert.set(false)"
+            ></ion-alert>
+          } @else {
+            <ion-alert
+              mode="md"
+              [isOpen]="showAlert()"
+              header="Confirm Action"
+              message="Are you sure you want to proceed?"
+              [buttons]="alertButtons"
+              [style]="componentStyles()['ion-alert']"
+              (didDismiss)="showAlert.set(false)"
+            ></ion-alert>
+          }
+
+          @if (componentModes()['ion-toast'] === 'ios') {
+            <ion-toast
+              mode="ios"
+              [isOpen]="showToast()"
+              message="Message sent successfully"
+              icon="checkmark-circle"
+              [duration]="3000"
+              position="top"
+              [buttons]="[{ text: 'Undo', role: 'cancel' }]"
+              [style]="componentStyles()['ion-toast']"
+              (didDismiss)="showToast.set(false)"
+            ></ion-toast>
+          } @else {
+            <ion-toast
+              mode="md"
+              [isOpen]="showToast()"
+              message="Message sent successfully"
+              icon="checkmark-circle"
+              [duration]="3000"
+              position="top"
+              [buttons]="[{ text: 'Undo', role: 'cancel' }]"
+              [style]="componentStyles()['ion-toast']"
+              (didDismiss)="showToast.set(false)"
+            ></ion-toast>
+          }
+
+          @if (componentModes()['ion-action-sheet'] === 'ios') {
+            <ion-action-sheet
+              mode="ios"
+              [isOpen]="showActionSheet()"
+              header="Actions"
+              [buttons]="actionSheetButtons"
+              [style]="componentStyles()['ion-action-sheet']"
+              (didDismiss)="showActionSheet.set(false)"
+            ></ion-action-sheet>
+          } @else {
+            <ion-action-sheet
+              mode="md"
+              [isOpen]="showActionSheet()"
+              header="Actions"
+              [buttons]="actionSheetButtons"
+              [style]="componentStyles()['ion-action-sheet']"
+              (didDismiss)="showActionSheet.set(false)"
+            ></ion-action-sheet>
+          }
+
+          @if (componentModes()['ion-modal'] === 'ios') {
+            <ion-modal mode="ios" [isOpen]="showModal()" [style]="componentStyles()['ion-modal']" (didDismiss)="showModal.set(false)">
+              <ng-template>
+                <ion-header>
+                  <ion-toolbar mode="ios">
+                    <ion-buttons slot="start"><ion-button mode="ios" (click)="showModal.set(false)">Cancel</ion-button></ion-buttons>
+                    <ion-title>New Item</ion-title>
+                    <ion-buttons slot="end"><ion-button mode="ios" (click)="showModal.set(false)"><strong>Save</strong></ion-button></ion-buttons>
+                  </ion-toolbar>
+                </ion-header>
+                <ion-content>
+                  <ion-list mode="ios">
+                    <ion-item mode="ios"><ion-input mode="ios" label="Name" placeholder="Enter name"></ion-input></ion-item>
+                    <ion-item mode="ios"><ion-input mode="ios" label="Email" placeholder="Enter email"></ion-input></ion-item>
+                    <ion-item mode="ios"><ion-textarea mode="ios" label="Notes" placeholder="Add notes"></ion-textarea></ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-modal>
+          } @else {
+            <ion-modal mode="md" [isOpen]="showModal()" [style]="componentStyles()['ion-modal']" (didDismiss)="showModal.set(false)">
+              <ng-template>
+                <ion-header>
+                  <ion-toolbar mode="md">
+                    <ion-buttons slot="start"><ion-button mode="md" (click)="showModal.set(false)"><ion-icon name="close"></ion-icon></ion-button></ion-buttons>
+                    <ion-title>New Item</ion-title>
+                    <ion-buttons slot="end"><ion-button mode="md" (click)="showModal.set(false)">Save</ion-button></ion-buttons>
+                  </ion-toolbar>
+                </ion-header>
+                <ion-content>
+                  <ion-list mode="md">
+                    <ion-item mode="md"><ion-input mode="md" label="Name" placeholder="Enter name"></ion-input></ion-item>
+                    <ion-item mode="md"><ion-input mode="md" label="Email" placeholder="Enter email"></ion-input></ion-item>
+                    <ion-item mode="md"><ion-textarea mode="md" label="Notes" placeholder="Add notes"></ion-textarea></ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-modal>
+          }
+
+          @if (componentModes()['ion-popover'] === 'ios') {
+            <ion-popover mode="ios" trigger="popover-trigger-ios" [isOpen]="showPopover()" [style]="componentStyles()['ion-popover']" (didDismiss)="showPopover.set(false)">
+              <ng-template>
+                <ion-content>
+                  <ion-list mode="ios">
+                    <ion-item mode="ios" button><ion-icon name="create-outline" slot="start"></ion-icon><ion-label>Edit</ion-label></ion-item>
+                    <ion-item mode="ios" button><ion-icon name="copy-outline" slot="start"></ion-icon><ion-label>Duplicate</ion-label></ion-item>
+                    <ion-item mode="ios" button lines="none"><ion-icon name="trash-outline" slot="start" color="danger"></ion-icon><ion-label color="danger">Delete</ion-label></ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+          } @else {
+            <ion-popover mode="md" trigger="popover-trigger-md" [isOpen]="showPopover()" [style]="componentStyles()['ion-popover']" (didDismiss)="showPopover.set(false)">
+              <ng-template>
+                <ion-content>
+                  <ion-list mode="md">
+                    <ion-item mode="md" button><ion-icon name="create-outline" slot="start"></ion-icon><ion-label>Edit</ion-label></ion-item>
+                    <ion-item mode="md" button><ion-icon name="copy-outline" slot="start"></ion-icon><ion-label>Duplicate</ion-label></ion-item>
+                    <ion-item mode="md" button lines="none"><ion-icon name="trash-outline" slot="start" color="danger"></ion-icon><ion-label color="danger">Delete</ion-label></ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+          }
+
           <!-- ═══════ TAB BAR ═══════ -->
           @if (componentModes()['ion-tab-bar'] === 'ios') {
             <ion-tab-bar mode="ios" [style]="componentStyles()['ion-tab-bar']">
