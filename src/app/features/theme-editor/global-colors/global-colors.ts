@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   inject,
+  signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -60,6 +61,64 @@ import {
             />
           </div>
         }
+      </div>
+
+      <!-- Custom Colors -->
+      <div class="border-t border-gray-100 pt-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold text-gray-800">Custom Colors</h3>
+          <button
+            type="button"
+            class="text-xs font-medium text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer flex items-center gap-1"
+            (click)="addColor()"
+            aria-label="Add custom color"
+          >
+            <span class="text-sm leading-none">+</span> Add Color
+          </button>
+        </div>
+
+        @if (themeService.customColors().length === 0) {
+          <p class="text-xs text-gray-400 px-3">No custom colors added yet. Custom colors generate <code class="bg-gray-100 px-1 rounded">ion-color-*</code> utility classes.</p>
+        }
+
+        <div class="space-y-2">
+          @for (custom of themeService.customColors(); track $index) {
+            <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-100">
+              <input
+                type="color"
+                [ngModel]="custom.value"
+                (ngModelChange)="themeService.updateCustomColor($index, { value: $event })"
+                class="w-7 h-7 rounded-md border border-gray-200 cursor-pointer shadow-sm p-0"
+                [attr.aria-label]="'Custom color ' + custom.name + ' picker'"
+              />
+              <input
+                type="text"
+                [ngModel]="custom.name"
+                (ngModelChange)="themeService.updateCustomColor($index, { name: sanitizeName($event) })"
+                placeholder="color-name"
+                class="w-24 text-xs font-mono px-2 py-1.5 border border-gray-200 rounded-md bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all"
+                [attr.aria-label]="'Custom color name'"
+              />
+              <input
+                type="text"
+                [ngModel]="custom.value"
+                (ngModelChange)="themeService.updateCustomColor($index, { value: $event })"
+                class="w-[5.5rem] text-xs font-mono px-2 py-1.5 border border-gray-200 rounded-md bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all"
+                [attr.aria-label]="custom.name + ' hex value'"
+              />
+              <button
+                type="button"
+                class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer ml-auto"
+                (click)="themeService.removeCustomColor($index)"
+                [attr.aria-label]="'Remove custom color ' + custom.name"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+          }
+        </div>
       </div>
 
       <!-- Divider -->
@@ -127,6 +186,19 @@ export class GlobalColorsComponent {
   protected readonly colors = computed(
     () => this.themeService.globalTheme().colors
   );
+
+  private colorCounter = signal(0);
+
+  protected addColor(): void {
+    const count = this.colorCounter();
+    this.colorCounter.set(count + 1);
+    const name = count === 0 ? 'custom' : `custom-${count + 1}`;
+    this.themeService.addCustomColor(name, '#69bb7b');
+  }
+
+  protected sanitizeName(name: string): string {
+    return name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  }
 
   protected readonly propertyGroups: {
     title: string;

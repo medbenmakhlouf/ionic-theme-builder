@@ -64,6 +64,11 @@ export interface ComponentVariable {
   defaultValue: string;
 }
 
+export interface CustomColor {
+  name: string;
+  value: string;
+}
+
 export type ThemeMode = 'light' | 'dark';
 export type DarkModeStrategy = 'always' | 'system' | 'class';
 export type IonicMode = 'all' | 'ios' | 'md';

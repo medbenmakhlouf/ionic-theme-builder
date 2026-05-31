@@ -1,6 +1,7 @@
 import { computed, Injectable, signal } from '@angular/core';
 import {
   ComponentThemeConfig,
+  CustomColor,
   DarkModeConfig,
   DarkModeStrategy,
   DEFAULT_DARK_THEME,
@@ -31,6 +32,7 @@ export class ThemeService {
   readonly componentThemes = signal<ComponentThemeConfig[]>(
     structuredClone(IONIC_COMPONENTS)
   );
+  readonly customColors = signal<CustomColor[]>([]);
 
   readonly generatedCss = computed(() => this.buildCss());
 
@@ -39,6 +41,20 @@ export class ThemeService {
       ...theme,
       colors: { ...theme.colors, [name]: value },
     }));
+  }
+
+  addCustomColor(name: string, value: string): void {
+    this.customColors.update((colors) => [...colors, { name, value }]);
+  }
+
+  updateCustomColor(index: number, updates: Partial<CustomColor>): void {
+    this.customColors.update((colors) =>
+      colors.map((c, i) => (i === index ? { ...c, ...updates } : c))
+    );
+  }
+
+  removeCustomColor(index: number): void {
+    this.customColors.update((colors) => colors.filter((_, i) => i !== index));
   }
 
   updateGlobalProperty(
@@ -267,6 +283,21 @@ export class ThemeService {
       }
     }
 
+    // Custom colors
+    const customs = this.customColors();
+    if (customs.length > 0) {
+      lines.push('');
+      lines.push('  /* Custom Colors */');
+      for (const custom of customs) {
+        const vars = generateIonicColorVariables(custom.name, custom.value);
+        lines.push('');
+        lines.push(`  /** ${custom.name} **/`);
+        for (const [varName, varValue] of Object.entries(vars)) {
+          lines.push(`  ${varName}: ${varValue};`);
+        }
+      }
+    }
+
     lines.push('');
     lines.push('  /* Application Colors */');
     lines.push(`  --ion-background-color: ${theme.backgroundColor};`);
@@ -397,6 +428,23 @@ export class ThemeService {
         for (const variable of variablesToOutput) {
           lines.push(`  ${variable.name}: ${variable.value};`);
         }
+        lines.push('}');
+      }
+    }
+
+    // Custom color utility classes
+    if (customs.length > 0) {
+      lines.push('');
+      lines.push('/* Custom Color Utility Classes */');
+      for (const custom of customs) {
+        lines.push('');
+        lines.push(`.ion-color-${custom.name} {`);
+        lines.push(`  --ion-color-base: var(--ion-color-${custom.name});`);
+        lines.push(`  --ion-color-base-rgb: var(--ion-color-${custom.name}-rgb);`);
+        lines.push(`  --ion-color-contrast: var(--ion-color-${custom.name}-contrast);`);
+        lines.push(`  --ion-color-contrast-rgb: var(--ion-color-${custom.name}-contrast-rgb);`);
+        lines.push(`  --ion-color-shade: var(--ion-color-${custom.name}-shade);`);
+        lines.push(`  --ion-color-tint: var(--ion-color-${custom.name}-tint);`);
         lines.push('}');
       }
     }
