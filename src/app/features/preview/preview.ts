@@ -14,6 +14,120 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
   selector: 'app-preview',
   changeDetection: ChangeDetectionStrategy.OnPush,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  styles: `
+    .phone-frame {
+      position: relative;
+      margin: 0 auto;
+      border-radius: 40px;
+      box-shadow:
+        0 0 0 2px #1a1a1a,
+        0 0 0 4px #333,
+        0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      width: 375px;
+      height: 750px;
+      background: #000;
+      flex-shrink: 0;
+    }
+
+    .phone-frame--ios {
+      border-radius: 44px;
+      box-shadow:
+        0 0 0 3px #1a1a1a,
+        0 0 0 5px #6b6b6b,
+        inset 0 0 0 1px #3a3a3a,
+        0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .phone-frame--md {
+      border-radius: 32px;
+      box-shadow:
+        0 0 0 2px #1a1a1a,
+        0 0 0 4px #444,
+        0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    /* iOS notch */
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 28px;
+      background: #000;
+      border-radius: 0 0 18px 18px;
+      z-index: 10;
+    }
+
+    .phone-notch::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 6px;
+      background: #1a1a1a;
+      border-radius: 3px;
+    }
+
+    /* Android punch-hole camera */
+    .phone-camera-hole {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 12px;
+      background: #1a1a1a;
+      border-radius: 50%;
+      z-index: 10;
+      box-shadow: 0 0 0 2px #333;
+    }
+
+    .phone-screen {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-radius: inherit;
+    }
+
+    .phone-frame--ios .phone-screen {
+      padding-top: 44px;
+    }
+
+    .phone-frame--md .phone-screen {
+      padding-top: 28px;
+    }
+
+    /* iOS home indicator */
+    .phone-home-indicator {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 2px;
+      z-index: 10;
+    }
+
+    /* Android nav bar */
+    .phone-nav-bar {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 2px;
+      z-index: 10;
+    }
+  `,
   template: `
     <section class="h-full flex flex-col">
       <!-- Preview controls -->
@@ -78,16 +192,26 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
       </div>
 
       <!--
-        Preview container: Using @if to force destroy/recreate of Ionic web components
+        Preview container: Phone frame mockup with scrollable content.
+        Using @if to force destroy/recreate of Ionic web components
         when platform changes, since Ionic components only read 'mode' at initialization.
       -->
-      <div
-        class="flex-1 overflow-auto rounded-xl border border-gray-200 shadow-sm"
-        [style]="previewStyles()"
-      >
-        @if (previewPlatform() === 'ios') {
-          <div class="ionic-preview p-5 space-y-6">
-            <ion-toolbar mode="ios">
+      <div class="flex-1 flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl border border-gray-200 shadow-sm py-6">
+        <div
+          class="phone-frame"
+          [class]="previewPlatform() === 'ios' ? 'phone-frame--ios' : 'phone-frame--md'"
+        >
+          @if (previewPlatform() === 'ios') {
+            <div class="phone-notch"></div>
+          } @else {
+            <div class="phone-camera-hole"></div>
+          }
+
+          <div class="phone-screen" [style]="previewStyles()"
+          >
+          @if (previewPlatform() === 'ios') {
+            <div class="ionic-preview p-5 space-y-6 pb-10">
+              <ion-toolbar mode="ios">
               <ion-title>My App</ion-title>
               <ion-buttons slot="start">
                 <ion-button mode="ios"><ion-icon name="menu-outline" slot="icon-only"></ion-icon></ion-button>
@@ -204,9 +328,9 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
               <ion-tab-button mode="ios"><ion-icon name="heart-outline"></ion-icon><ion-label>Favorites</ion-label><ion-badge color="danger">3</ion-badge></ion-tab-button>
               <ion-tab-button mode="ios"><ion-icon name="person-outline"></ion-icon><ion-label>Profile</ion-label></ion-tab-button>
             </ion-tab-bar>
-          </div>
-        } @else {
-          <div class="ionic-preview p-5 space-y-6">
+            </div>
+          } @else {
+            <div class="ionic-preview p-5 space-y-6 pb-10">
             <ion-toolbar mode="md">
               <ion-title>My App</ion-title>
               <ion-buttons slot="start">
@@ -324,8 +448,16 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
               <ion-tab-button mode="md"><ion-icon name="heart-outline"></ion-icon><ion-label>Favorites</ion-label><ion-badge color="danger">3</ion-badge></ion-tab-button>
               <ion-tab-button mode="md"><ion-icon name="person-outline"></ion-icon><ion-label>Profile</ion-label></ion-tab-button>
             </ion-tab-bar>
+            </div>
+          }
           </div>
-        }
+
+          @if (previewPlatform() === 'ios') {
+            <div class="phone-home-indicator"></div>
+          } @else {
+            <div class="phone-nav-bar"></div>
+          }
+        </div>
       </div>
     </section>
   `,
