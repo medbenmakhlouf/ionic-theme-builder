@@ -23,247 +23,355 @@
         [class]="platform() === 'ios' ? 'pt-11' : 'pt-7'"
         [style]="previewStyles()"
       >
-        @if (platform() === 'ios') {
-          <div class="ionic-preview p-5 space-y-6 pb-10">
-            <ion-toolbar mode="ios">
+        <div class="ionic-preview p-5 space-y-6 pb-10">
+
+          <!-- Toolbar -->
+          @if (componentModes()['ion-toolbar'] === 'ios') {
+            <ion-toolbar mode="ios" [style]="componentStyles()['ion-toolbar']">
               <ion-title>My App</ion-title>
               <ion-buttons slot="start">
-                <ion-button mode="ios"><ion-icon name="menu-outline" slot="icon-only"></ion-icon></ion-button>
+                @if (componentModes()['ion-button'] === 'ios') {
+                  <ion-button mode="ios" [style]="componentStyles()['ion-button']"><ion-icon name="menu-outline" slot="icon-only"></ion-icon></ion-button>
+                } @else {
+                  <ion-button mode="md" [style]="componentStyles()['ion-button']"><ion-icon name="menu-outline" slot="icon-only"></ion-icon></ion-button>
+                }
               </ion-buttons>
               <ion-buttons slot="end">
-                <ion-button mode="ios"><ion-icon name="notifications-outline" slot="icon-only"></ion-icon></ion-button>
+                @if (componentModes()['ion-button'] === 'ios') {
+                  <ion-button mode="ios" [style]="componentStyles()['ion-button']"><ion-icon name="notifications-outline" slot="icon-only"></ion-icon></ion-button>
+                } @else {
+                  <ion-button mode="md" [style]="componentStyles()['ion-button']"><ion-icon name="notifications-outline" slot="icon-only"></ion-icon></ion-button>
+                }
               </ion-buttons>
             </ion-toolbar>
+          } @else {
+            <ion-toolbar mode="md" [style]="componentStyles()['ion-toolbar']">
+              <ion-title>My App</ion-title>
+              <ion-buttons slot="start">
+                @if (componentModes()['ion-button'] === 'ios') {
+                  <ion-button mode="ios" [style]="componentStyles()['ion-button']"><ion-icon name="menu-outline" slot="icon-only"></ion-icon></ion-button>
+                } @else {
+                  <ion-button mode="md" [style]="componentStyles()['ion-button']"><ion-icon name="menu-outline" slot="icon-only"></ion-icon></ion-button>
+                }
+              </ion-buttons>
+              <ion-buttons slot="end">
+                @if (componentModes()['ion-button'] === 'ios') {
+                  <ion-button mode="ios" [style]="componentStyles()['ion-button']"><ion-icon name="notifications-outline" slot="icon-only"></ion-icon></ion-button>
+                } @else {
+                  <ion-button mode="md" [style]="componentStyles()['ion-button']"><ion-icon name="notifications-outline" slot="icon-only"></ion-icon></ion-button>
+                }
+              </ion-buttons>
+            </ion-toolbar>
+          }
 
-            <ion-segment value="all" mode="ios">
+          <!-- Segment -->
+          @if (componentModes()['ion-segment'] === 'ios') {
+            <ion-segment value="all" mode="ios" [style]="componentStyles()['ion-segment']">
               <ion-segment-button value="all" mode="ios"><ion-label>All</ion-label></ion-segment-button>
               <ion-segment-button value="favorites" mode="ios"><ion-label>Favorites</ion-label></ion-segment-button>
               <ion-segment-button value="recent" mode="ios"><ion-label>Recent</ion-label></ion-segment-button>
             </ion-segment>
+          } @else {
+            <ion-segment value="all" mode="md" [style]="componentStyles()['ion-segment']">
+              <ion-segment-button value="all" mode="md"><ion-label>All</ion-label></ion-segment-button>
+              <ion-segment-button value="favorites" mode="md"><ion-label>Favorites</ion-label></ion-segment-button>
+              <ion-segment-button value="recent" mode="md"><ion-label>Recent</ion-label></ion-segment-button>
+            </ion-segment>
+          }
 
-            <div class="space-y-2">
-              <h3 class="text-sm font-medium px-2" style="color: var(--ion-text-color)">Buttons</h3>
-              <div class="flex flex-wrap gap-2 px-2">
-                <ion-button mode="ios" color="primary">Primary</ion-button>
-                <ion-button mode="ios" color="secondary">Secondary</ion-button>
-                <ion-button mode="ios" color="tertiary">Tertiary</ion-button>
-                <ion-button mode="ios" color="success">Success</ion-button>
-                <ion-button mode="ios" color="warning">Warning</ion-button>
-                <ion-button mode="ios" color="danger">Danger</ion-button>
-              </div>
-              <div class="flex flex-wrap gap-2 px-2">
-                <ion-button mode="ios" fill="outline" color="primary">Outline</ion-button>
-                <ion-button mode="ios" fill="clear" color="primary">Clear</ion-button>
-                <ion-button mode="ios" color="dark">Dark</ion-button>
-                <ion-button mode="ios" color="light">Light</ion-button>
-              </div>
+          <!-- Buttons -->
+          <div class="space-y-2">
+            <h3 class="text-sm font-medium px-2" style="color: var(--ion-text-color)">Buttons</h3>
+            <div class="flex flex-wrap gap-2 px-2">
+              @if (componentModes()['ion-button'] === 'ios') {
+                <ion-button mode="ios" color="primary" [style]="componentStyles()['ion-button']">Primary</ion-button>
+                <ion-button mode="ios" color="secondary" [style]="componentStyles()['ion-button']">Secondary</ion-button>
+                <ion-button mode="ios" color="tertiary" [style]="componentStyles()['ion-button']">Tertiary</ion-button>
+                <ion-button mode="ios" color="success" [style]="componentStyles()['ion-button']">Success</ion-button>
+                <ion-button mode="ios" color="warning" [style]="componentStyles()['ion-button']">Warning</ion-button>
+                <ion-button mode="ios" color="danger" [style]="componentStyles()['ion-button']">Danger</ion-button>
+              } @else {
+                <ion-button mode="md" color="primary" [style]="componentStyles()['ion-button']">Primary</ion-button>
+                <ion-button mode="md" color="secondary" [style]="componentStyles()['ion-button']">Secondary</ion-button>
+                <ion-button mode="md" color="tertiary" [style]="componentStyles()['ion-button']">Tertiary</ion-button>
+                <ion-button mode="md" color="success" [style]="componentStyles()['ion-button']">Success</ion-button>
+                <ion-button mode="md" color="warning" [style]="componentStyles()['ion-button']">Warning</ion-button>
+                <ion-button mode="md" color="danger" [style]="componentStyles()['ion-button']">Danger</ion-button>
+              }
             </div>
+            <div class="flex flex-wrap gap-2 px-2">
+              @if (componentModes()['ion-button'] === 'ios') {
+                <ion-button mode="ios" fill="outline" color="primary" [style]="componentStyles()['ion-button']">Outline</ion-button>
+                <ion-button mode="ios" fill="clear" color="primary" [style]="componentStyles()['ion-button']">Clear</ion-button>
+                <ion-button mode="ios" color="dark" [style]="componentStyles()['ion-button']">Dark</ion-button>
+                <ion-button mode="ios" color="light" [style]="componentStyles()['ion-button']">Light</ion-button>
+              } @else {
+                <ion-button mode="md" fill="outline" color="primary" [style]="componentStyles()['ion-button']">Outline</ion-button>
+                <ion-button mode="md" fill="clear" color="primary" [style]="componentStyles()['ion-button']">Clear</ion-button>
+                <ion-button mode="md" color="dark" [style]="componentStyles()['ion-button']">Dark</ion-button>
+                <ion-button mode="md" color="light" [style]="componentStyles()['ion-button']">Light</ion-button>
+              }
+            </div>
+          </div>
 
-            <ion-card mode="ios">
+          <!-- Card -->
+          @if (componentModes()['ion-card'] === 'ios') {
+            <ion-card mode="ios" [style]="componentStyles()['ion-card']">
               <ion-card-header mode="ios">
                 <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
                 <ion-card-title>Card Title</ion-card-title>
               </ion-card-header>
               <ion-card-content>Sample card content to preview your theme.</ion-card-content>
             </ion-card>
-
-            <ion-searchbar mode="ios" placeholder="Search items..."></ion-searchbar>
-
-            <ion-list mode="ios">
-              <ion-item mode="ios">
-                <ion-avatar slot="start">
-                  <div style="width:40px;height:40px;border-radius:50%;background:#93c5fd;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#1d4ed8">AB</div>
-                </ion-avatar>
-                <ion-label><h2>Alex Builder</h2><p>Developer</p></ion-label>
-                <ion-badge slot="end" color="primary">Pro</ion-badge>
-              </ion-item>
-              <ion-item mode="ios">
-                <ion-icon name="mail-outline" slot="start"></ion-icon>
-                <ion-label>Messages</ion-label>
-                <ion-badge slot="end" color="danger">5</ion-badge>
-              </ion-item>
-              <ion-item mode="ios">
-                <ion-icon name="notifications-outline" slot="start"></ion-icon>
-                <ion-label>Notifications</ion-label>
-                <ion-toggle mode="ios"></ion-toggle>
-              </ion-item>
-              <ion-item mode="ios">
-                <ion-checkbox mode="ios" slot="start" checked></ion-checkbox>
-                <ion-label>Subscribe to Newsletter</ion-label>
-              </ion-item>
-            </ion-list>
-
-            <div class="px-2 space-y-3">
-              <h3 class="text-sm font-medium" style="color: var(--ion-text-color)">Form Inputs</h3>
-              <ion-input mode="ios" label="Full Name" label-placement="floating" placeholder="Enter your name" fill="outline"></ion-input>
-              <ion-textarea mode="ios" label="Bio" label-placement="floating" placeholder="Tell us about yourself" fill="outline" rows="3"></ion-textarea>
-            </div>
-
-            <ion-list mode="ios">
-              <ion-radio-group value="option1">
-                <ion-item mode="ios"><ion-radio mode="ios" value="option1">Option One</ion-radio></ion-item>
-                <ion-item mode="ios"><ion-radio mode="ios" value="option2">Option Two</ion-radio></ion-item>
-              </ion-radio-group>
-            </ion-list>
-
-            <div class="px-2">
-              <ion-range mode="ios" aria-label="Volume" min="0" max="100" value="50" pin="true">
-                <ion-icon name="volume-low-outline" slot="start"></ion-icon>
-                <ion-icon name="volume-high-outline" slot="end"></ion-icon>
-              </ion-range>
-            </div>
-
-            <div class="px-2 space-y-2">
-              <ion-progress-bar mode="ios" value="0.65"></ion-progress-bar>
-              <ion-progress-bar mode="ios" type="indeterminate"></ion-progress-bar>
-            </div>
-
-            <div class="flex flex-wrap gap-2 px-2">
-              <ion-chip mode="ios" color="primary"><ion-icon name="star"></ion-icon><ion-label>Primary</ion-label></ion-chip>
-              <ion-chip mode="ios" color="secondary"><ion-label>Secondary</ion-label></ion-chip>
-              <ion-chip mode="ios" color="success"><ion-icon name="checkmark-circle"></ion-icon><ion-label>Success</ion-label></ion-chip>
-              <ion-chip mode="ios" color="danger"><ion-icon name="close-circle"></ion-icon><ion-label>Danger</ion-label></ion-chip>
-            </div>
-
-            <ion-accordion-group mode="ios">
-              <ion-accordion value="first" mode="ios">
-                <ion-item slot="header" mode="ios"><ion-label>Accordion Item 1</ion-label></ion-item>
-                <div class="px-4 py-2" slot="content">Content for the first accordion item.</div>
-              </ion-accordion>
-              <ion-accordion value="second" mode="ios">
-                <ion-item slot="header" mode="ios"><ion-label>Accordion Item 2</ion-label></ion-item>
-                <div class="px-4 py-2" slot="content">Content for the second accordion item.</div>
-              </ion-accordion>
-            </ion-accordion-group>
-
-            <ion-tab-bar mode="ios">
-              <ion-tab-button mode="ios" selected><ion-icon name="home-outline"></ion-icon><ion-label>Home</ion-label></ion-tab-button>
-              <ion-tab-button mode="ios"><ion-icon name="search-outline"></ion-icon><ion-label>Search</ion-label></ion-tab-button>
-              <ion-tab-button mode="ios"><ion-icon name="heart-outline"></ion-icon><ion-label>Favorites</ion-label><ion-badge color="danger">3</ion-badge></ion-tab-button>
-              <ion-tab-button mode="ios"><ion-icon name="person-outline"></ion-icon><ion-label>Profile</ion-label></ion-tab-button>
-            </ion-tab-bar>
-          </div>
-        } @else {
-          <div class="ionic-preview p-5 space-y-6 pb-10">
-            <ion-toolbar mode="md">
-              <ion-title>My App</ion-title>
-              <ion-buttons slot="start">
-                <ion-button mode="md"><ion-icon name="menu-outline" slot="icon-only"></ion-icon></ion-button>
-              </ion-buttons>
-              <ion-buttons slot="end">
-                <ion-button mode="md"><ion-icon name="notifications-outline" slot="icon-only"></ion-icon></ion-button>
-              </ion-buttons>
-            </ion-toolbar>
-
-            <ion-segment value="all" mode="md">
-              <ion-segment-button value="all" mode="md"><ion-label>All</ion-label></ion-segment-button>
-              <ion-segment-button value="favorites" mode="md"><ion-label>Favorites</ion-label></ion-segment-button>
-              <ion-segment-button value="recent" mode="md"><ion-label>Recent</ion-label></ion-segment-button>
-            </ion-segment>
-
-            <div class="space-y-2">
-              <h3 class="text-sm font-medium px-2" style="color: var(--ion-text-color)">Buttons</h3>
-              <div class="flex flex-wrap gap-2 px-2">
-                <ion-button mode="md" color="primary">Primary</ion-button>
-                <ion-button mode="md" color="secondary">Secondary</ion-button>
-                <ion-button mode="md" color="tertiary">Tertiary</ion-button>
-                <ion-button mode="md" color="success">Success</ion-button>
-                <ion-button mode="md" color="warning">Warning</ion-button>
-                <ion-button mode="md" color="danger">Danger</ion-button>
-              </div>
-              <div class="flex flex-wrap gap-2 px-2">
-                <ion-button mode="md" fill="outline" color="primary">Outline</ion-button>
-                <ion-button mode="md" fill="clear" color="primary">Clear</ion-button>
-                <ion-button mode="md" color="dark">Dark</ion-button>
-                <ion-button mode="md" color="light">Light</ion-button>
-              </div>
-            </div>
-
-            <ion-card mode="md">
+          } @else {
+            <ion-card mode="md" [style]="componentStyles()['ion-card']">
               <ion-card-header mode="md">
                 <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
                 <ion-card-title>Card Title</ion-card-title>
               </ion-card-header>
               <ion-card-content>Sample card content to preview your theme.</ion-card-content>
             </ion-card>
+          }
 
-            <ion-searchbar mode="md" placeholder="Search items..."></ion-searchbar>
+          <!-- Searchbar -->
+          @if (componentModes()['ion-searchbar'] === 'ios') {
+            <ion-searchbar mode="ios" placeholder="Search items..." [style]="componentStyles()['ion-searchbar']"></ion-searchbar>
+          } @else {
+            <ion-searchbar mode="md" placeholder="Search items..." [style]="componentStyles()['ion-searchbar']"></ion-searchbar>
+          }
 
-            <ion-list mode="md">
-              <ion-item mode="md">
-                <ion-avatar slot="start">
-                  <div style="width:40px;height:40px;border-radius:50%;background:#93c5fd;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#1d4ed8">AB</div>
-                </ion-avatar>
-                <ion-label><h2>Alex Builder</h2><p>Developer</p></ion-label>
-                <ion-badge slot="end" color="primary">Pro</ion-badge>
-              </ion-item>
-              <ion-item mode="md">
-                <ion-icon name="mail-outline" slot="start"></ion-icon>
-                <ion-label>Messages</ion-label>
-                <ion-badge slot="end" color="danger">5</ion-badge>
-              </ion-item>
-              <ion-item mode="md">
-                <ion-icon name="notifications-outline" slot="start"></ion-icon>
-                <ion-label>Notifications</ion-label>
-                <ion-toggle mode="md"></ion-toggle>
-              </ion-item>
-              <ion-item mode="md">
-                <ion-checkbox mode="md" slot="start" checked></ion-checkbox>
-                <ion-label>Subscribe to Newsletter</ion-label>
-              </ion-item>
+          <!-- List with items -->
+          @if (componentModes()['ion-list'] === 'ios') {
+            <ion-list mode="ios" [style]="componentStyles()['ion-list']">
+              @if (componentModes()['ion-item'] === 'ios') {
+                <ion-item mode="ios" [style]="componentStyles()['ion-item']">
+                  <ion-avatar slot="start">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#93c5fd;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#1d4ed8">AB</div>
+                  </ion-avatar>
+                  <ion-label><h2>Alex Builder</h2><p>Developer</p></ion-label>
+                  <ion-badge slot="end" color="primary" [style]="componentStyles()['ion-badge']">Pro</ion-badge>
+                </ion-item>
+                <ion-item mode="ios" [style]="componentStyles()['ion-item']">
+                  <ion-icon name="mail-outline" slot="start"></ion-icon>
+                  <ion-label>Messages</ion-label>
+                  <ion-badge slot="end" color="danger" [style]="componentStyles()['ion-badge']">5</ion-badge>
+                </ion-item>
+                <ion-item mode="ios" [style]="componentStyles()['ion-item']">
+                  <ion-icon name="notifications-outline" slot="start"></ion-icon>
+                  <ion-label>Notifications</ion-label>
+                  @if (componentModes()['ion-toggle'] === 'ios') {
+                    <ion-toggle mode="ios" [style]="componentStyles()['ion-toggle']"></ion-toggle>
+                  } @else {
+                    <ion-toggle mode="md" [style]="componentStyles()['ion-toggle']"></ion-toggle>
+                  }
+                </ion-item>
+                <ion-item mode="ios" [style]="componentStyles()['ion-item']">
+                  @if (componentModes()['ion-checkbox'] === 'ios') {
+                    <ion-checkbox mode="ios" slot="start" checked [style]="componentStyles()['ion-checkbox']"></ion-checkbox>
+                  } @else {
+                    <ion-checkbox mode="md" slot="start" checked [style]="componentStyles()['ion-checkbox']"></ion-checkbox>
+                  }
+                  <ion-label>Subscribe to Newsletter</ion-label>
+                </ion-item>
+              } @else {
+                <ion-item mode="md" [style]="componentStyles()['ion-item']">
+                  <ion-avatar slot="start">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#93c5fd;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#1d4ed8">AB</div>
+                  </ion-avatar>
+                  <ion-label><h2>Alex Builder</h2><p>Developer</p></ion-label>
+                  <ion-badge slot="end" color="primary" [style]="componentStyles()['ion-badge']">Pro</ion-badge>
+                </ion-item>
+                <ion-item mode="md" [style]="componentStyles()['ion-item']">
+                  <ion-icon name="mail-outline" slot="start"></ion-icon>
+                  <ion-label>Messages</ion-label>
+                  <ion-badge slot="end" color="danger" [style]="componentStyles()['ion-badge']">5</ion-badge>
+                </ion-item>
+                <ion-item mode="md" [style]="componentStyles()['ion-item']">
+                  <ion-icon name="notifications-outline" slot="start"></ion-icon>
+                  <ion-label>Notifications</ion-label>
+                  @if (componentModes()['ion-toggle'] === 'ios') {
+                    <ion-toggle mode="ios" [style]="componentStyles()['ion-toggle']"></ion-toggle>
+                  } @else {
+                    <ion-toggle mode="md" [style]="componentStyles()['ion-toggle']"></ion-toggle>
+                  }
+                </ion-item>
+                <ion-item mode="md" [style]="componentStyles()['ion-item']">
+                  @if (componentModes()['ion-checkbox'] === 'ios') {
+                    <ion-checkbox mode="ios" slot="start" checked [style]="componentStyles()['ion-checkbox']"></ion-checkbox>
+                  } @else {
+                    <ion-checkbox mode="md" slot="start" checked [style]="componentStyles()['ion-checkbox']"></ion-checkbox>
+                  }
+                  <ion-label>Subscribe to Newsletter</ion-label>
+                </ion-item>
+              }
             </ion-list>
+          } @else {
+            <ion-list mode="md" [style]="componentStyles()['ion-list']">
+              @if (componentModes()['ion-item'] === 'ios') {
+                <ion-item mode="ios" [style]="componentStyles()['ion-item']">
+                  <ion-avatar slot="start">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#93c5fd;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#1d4ed8">AB</div>
+                  </ion-avatar>
+                  <ion-label><h2>Alex Builder</h2><p>Developer</p></ion-label>
+                  <ion-badge slot="end" color="primary" [style]="componentStyles()['ion-badge']">Pro</ion-badge>
+                </ion-item>
+              } @else {
+                <ion-item mode="md" [style]="componentStyles()['ion-item']">
+                  <ion-avatar slot="start">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#93c5fd;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#1d4ed8">AB</div>
+                  </ion-avatar>
+                  <ion-label><h2>Alex Builder</h2><p>Developer</p></ion-label>
+                  <ion-badge slot="end" color="primary" [style]="componentStyles()['ion-badge']">Pro</ion-badge>
+                </ion-item>
+                <ion-item mode="md" [style]="componentStyles()['ion-item']">
+                  <ion-icon name="mail-outline" slot="start"></ion-icon>
+                  <ion-label>Messages</ion-label>
+                  <ion-badge slot="end" color="danger" [style]="componentStyles()['ion-badge']">5</ion-badge>
+                </ion-item>
+                <ion-item mode="md" [style]="componentStyles()['ion-item']">
+                  <ion-icon name="notifications-outline" slot="start"></ion-icon>
+                  <ion-label>Notifications</ion-label>
+                  @if (componentModes()['ion-toggle'] === 'ios') {
+                    <ion-toggle mode="ios" [style]="componentStyles()['ion-toggle']"></ion-toggle>
+                  } @else {
+                    <ion-toggle mode="md" [style]="componentStyles()['ion-toggle']"></ion-toggle>
+                  }
+                </ion-item>
+                <ion-item mode="md" [style]="componentStyles()['ion-item']">
+                  @if (componentModes()['ion-checkbox'] === 'ios') {
+                    <ion-checkbox mode="ios" slot="start" checked [style]="componentStyles()['ion-checkbox']"></ion-checkbox>
+                  } @else {
+                    <ion-checkbox mode="md" slot="start" checked [style]="componentStyles()['ion-checkbox']"></ion-checkbox>
+                  }
+                  <ion-label>Subscribe to Newsletter</ion-label>
+                </ion-item>
+              }
+            </ion-list>
+          }
 
-            <div class="px-2 space-y-3">
-              <h3 class="text-sm font-medium" style="color: var(--ion-text-color)">Form Inputs</h3>
-              <ion-input mode="md" label="Full Name" label-placement="floating" placeholder="Enter your name" fill="outline"></ion-input>
-              <ion-textarea mode="md" label="Bio" label-placement="floating" placeholder="Tell us about yourself" fill="outline" rows="3"></ion-textarea>
-            </div>
+          <!-- Form Inputs -->
+          <div class="px-2 space-y-3">
+            <h3 class="text-sm font-medium" style="color: var(--ion-text-color)">Form Inputs</h3>
+            @if (componentModes()['ion-input'] === 'ios') {
+              <ion-input mode="ios" label="Full Name" label-placement="floating" placeholder="Enter your name" fill="outline" [style]="componentStyles()['ion-input']"></ion-input>
+              <ion-textarea mode="ios" label="Bio" label-placement="floating" placeholder="Tell us about yourself" fill="outline" rows="3" [style]="componentStyles()['ion-textarea']"></ion-textarea>
+            } @else {
+              <ion-input mode="md" label="Full Name" label-placement="floating" placeholder="Enter your name" fill="outline" [style]="componentStyles()['ion-input']"></ion-input>
+              <ion-textarea mode="md" label="Bio" label-placement="floating" placeholder="Tell us about yourself" fill="outline" rows="3" [style]="componentStyles()['ion-textarea']"></ion-textarea>
+            }
+          </div>
 
-            <ion-list mode="md">
+          <!-- Radio group -->
+          @if (componentModes()['ion-list'] === 'ios') {
+            <ion-list mode="ios" [style]="componentStyles()['ion-list']">
               <ion-radio-group value="option1">
-                <ion-item mode="md"><ion-radio mode="md" value="option1">Option One</ion-radio></ion-item>
-                <ion-item mode="md"><ion-radio mode="md" value="option2">Option Two</ion-radio></ion-item>
+                @if (componentModes()['ion-item'] === 'ios') {
+                  <ion-item mode="ios" [style]="componentStyles()['ion-item']"><ion-radio mode="ios" value="option1" [style]="componentStyles()['ion-radio']">Option One</ion-radio></ion-item>
+                  <ion-item mode="ios" [style]="componentStyles()['ion-item']"><ion-radio mode="ios" value="option2" [style]="componentStyles()['ion-radio']">Option Two</ion-radio></ion-item>
+                } @else {
+                  <ion-item mode="md" [style]="componentStyles()['ion-item']"><ion-radio mode="md" value="option1" [style]="componentStyles()['ion-radio']">Option One</ion-radio></ion-item>
+                  <ion-item mode="md" [style]="componentStyles()['ion-item']"><ion-radio mode="md" value="option2" [style]="componentStyles()['ion-radio']">Option Two</ion-radio></ion-item>
+                }
               </ion-radio-group>
             </ion-list>
+          } @else {
+            <ion-list mode="md" [style]="componentStyles()['ion-list']">
+              <ion-radio-group value="option1">
+                @if (componentModes()['ion-item'] === 'ios') {
+                  <ion-item mode="ios" [style]="componentStyles()['ion-item']"><ion-radio mode="ios" value="option1" [style]="componentStyles()['ion-radio']">Option One</ion-radio></ion-item>
+                  <ion-item mode="ios" [style]="componentStyles()['ion-item']"><ion-radio mode="ios" value="option2" [style]="componentStyles()['ion-radio']">Option Two</ion-radio></ion-item>
+                } @else {
+                  <ion-item mode="md" [style]="componentStyles()['ion-item']"><ion-radio mode="md" value="option1" [style]="componentStyles()['ion-radio']">Option One</ion-radio></ion-item>
+                  <ion-item mode="md" [style]="componentStyles()['ion-item']"><ion-radio mode="md" value="option2" [style]="componentStyles()['ion-radio']">Option Two</ion-radio></ion-item>
+                }
+              </ion-radio-group>
+            </ion-list>
+          }
 
-            <div class="px-2">
-              <ion-range mode="md" aria-label="Volume" min="0" max="100" value="50" pin="true">
+          <!-- Range -->
+          <div class="px-2">
+            @if (componentModes()['ion-range'] === 'ios') {
+              <ion-range mode="ios" aria-label="Volume" min="0" max="100" value="50" pin="true" [style]="componentStyles()['ion-range']">
                 <ion-icon name="volume-low-outline" slot="start"></ion-icon>
                 <ion-icon name="volume-high-outline" slot="end"></ion-icon>
               </ion-range>
-            </div>
+            } @else {
+              <ion-range mode="md" aria-label="Volume" min="0" max="100" value="50" pin="true" [style]="componentStyles()['ion-range']">
+                <ion-icon name="volume-low-outline" slot="start"></ion-icon>
+                <ion-icon name="volume-high-outline" slot="end"></ion-icon>
+              </ion-range>
+            }
+          </div>
 
-            <div class="px-2 space-y-2">
-              <ion-progress-bar mode="md" value="0.65"></ion-progress-bar>
-              <ion-progress-bar mode="md" type="indeterminate"></ion-progress-bar>
-            </div>
+          <!-- Progress bars -->
+          <div class="px-2 space-y-2">
+            @if (componentModes()['ion-progress-bar'] === 'ios') {
+              <ion-progress-bar mode="ios" value="0.65" [style]="componentStyles()['ion-progress-bar']"></ion-progress-bar>
+              <ion-progress-bar mode="ios" type="indeterminate" [style]="componentStyles()['ion-progress-bar']"></ion-progress-bar>
+            } @else {
+              <ion-progress-bar mode="md" value="0.65" [style]="componentStyles()['ion-progress-bar']"></ion-progress-bar>
+              <ion-progress-bar mode="md" type="indeterminate" [style]="componentStyles()['ion-progress-bar']"></ion-progress-bar>
+            }
+          </div>
 
-            <div class="flex flex-wrap gap-2 px-2">
-              <ion-chip mode="md" color="primary"><ion-icon name="star"></ion-icon><ion-label>Primary</ion-label></ion-chip>
-              <ion-chip mode="md" color="secondary"><ion-label>Secondary</ion-label></ion-chip>
-              <ion-chip mode="md" color="success"><ion-icon name="checkmark-circle"></ion-icon><ion-label>Success</ion-label></ion-chip>
-              <ion-chip mode="md" color="danger"><ion-icon name="close-circle"></ion-icon><ion-label>Danger</ion-label></ion-chip>
-            </div>
+          <!-- Chips -->
+          <div class="flex flex-wrap gap-2 px-2">
+            @if (componentModes()['ion-chip'] === 'ios') {
+              <ion-chip mode="ios" color="primary" [style]="componentStyles()['ion-chip']"><ion-icon name="star"></ion-icon><ion-label>Primary</ion-label></ion-chip>
+              <ion-chip mode="ios" color="secondary" [style]="componentStyles()['ion-chip']"><ion-label>Secondary</ion-label></ion-chip>
+              <ion-chip mode="ios" color="success" [style]="componentStyles()['ion-chip']"><ion-icon name="checkmark-circle"></ion-icon><ion-label>Success</ion-label></ion-chip>
+              <ion-chip mode="ios" color="danger" [style]="componentStyles()['ion-chip']"><ion-icon name="close-circle"></ion-icon><ion-label>Danger</ion-label></ion-chip>
+            } @else {
+              <ion-chip mode="md" color="primary" [style]="componentStyles()['ion-chip']"><ion-icon name="star"></ion-icon><ion-label>Primary</ion-label></ion-chip>
+              <ion-chip mode="md" color="secondary" [style]="componentStyles()['ion-chip']"><ion-label>Secondary</ion-label></ion-chip>
+              <ion-chip mode="md" color="success" [style]="componentStyles()['ion-chip']"><ion-icon name="checkmark-circle"></ion-icon><ion-label>Success</ion-label></ion-chip>
+              <ion-chip mode="md" color="danger" [style]="componentStyles()['ion-chip']"><ion-icon name="close-circle"></ion-icon><ion-label>Danger</ion-label></ion-chip>
+            }
+          </div>
 
-            <ion-accordion-group mode="md">
-              <ion-accordion value="first" mode="md">
-                <ion-item slot="header" mode="md"><ion-label>Accordion Item 1</ion-label></ion-item>
+          <!-- Accordion -->
+          @if (componentModes()['ion-accordion-group'] === 'ios') {
+            <ion-accordion-group mode="ios" [style]="componentStyles()['ion-accordion-group']">
+              <ion-accordion value="first" mode="ios" [style]="componentStyles()['ion-accordion']">
+                <ion-item slot="header" mode="ios" [style]="componentStyles()['ion-item']"><ion-label>Accordion Item 1</ion-label></ion-item>
                 <div class="px-4 py-2" slot="content">Content for the first accordion item.</div>
               </ion-accordion>
-              <ion-accordion value="second" mode="md">
-                <ion-item slot="header" mode="md"><ion-label>Accordion Item 2</ion-label></ion-item>
+              <ion-accordion value="second" mode="ios" [style]="componentStyles()['ion-accordion']">
+                <ion-item slot="header" mode="ios" [style]="componentStyles()['ion-item']"><ion-label>Accordion Item 2</ion-label></ion-item>
                 <div class="px-4 py-2" slot="content">Content for the second accordion item.</div>
               </ion-accordion>
             </ion-accordion-group>
+          } @else {
+            <ion-accordion-group mode="md" [style]="componentStyles()['ion-accordion-group']">
+              <ion-accordion value="first" mode="md" [style]="componentStyles()['ion-accordion']">
+                <ion-item slot="header" mode="md" [style]="componentStyles()['ion-item']"><ion-label>Accordion Item 1</ion-label></ion-item>
+                <div class="px-4 py-2" slot="content">Content for the first accordion item.</div>
+              </ion-accordion>
+              <ion-accordion value="second" mode="md" [style]="componentStyles()['ion-accordion']">
+                <ion-item slot="header" mode="md" [style]="componentStyles()['ion-item']"><ion-label>Accordion Item 2</ion-label></ion-item>
+                <div class="px-4 py-2" slot="content">Content for the second accordion item.</div>
+              </ion-accordion>
+            </ion-accordion-group>
+          }
 
-            <ion-tab-bar mode="md">
-              <ion-tab-button mode="md" selected><ion-icon name="home-outline"></ion-icon><ion-label>Home</ion-label></ion-tab-button>
-              <ion-tab-button mode="md"><ion-icon name="search-outline"></ion-icon><ion-label>Search</ion-label></ion-tab-button>
-              <ion-tab-button mode="md"><ion-icon name="heart-outline"></ion-icon><ion-label>Favorites</ion-label><ion-badge color="danger">3</ion-badge></ion-tab-button>
-              <ion-tab-button mode="md"><ion-icon name="person-outline"></ion-icon><ion-label>Profile</ion-label></ion-tab-button>
+          <!-- Tab bar -->
+          @if (componentModes()['ion-tab-bar'] === 'ios') {
+            <ion-tab-bar mode="ios" [style]="componentStyles()['ion-tab-bar']">
+              <ion-tab-button mode="ios" selected [style]="componentStyles()['ion-tab-button']"><ion-icon name="home-outline"></ion-icon><ion-label>Home</ion-label></ion-tab-button>
+              <ion-tab-button mode="ios" [style]="componentStyles()['ion-tab-button']"><ion-icon name="search-outline"></ion-icon><ion-label>Search</ion-label></ion-tab-button>
+              <ion-tab-button mode="ios" [style]="componentStyles()['ion-tab-button']"><ion-icon name="heart-outline"></ion-icon><ion-label>Favorites</ion-label><ion-badge color="danger" [style]="componentStyles()['ion-badge']">3</ion-badge></ion-tab-button>
+              <ion-tab-button mode="ios" [style]="componentStyles()['ion-tab-button']"><ion-icon name="person-outline"></ion-icon><ion-label>Profile</ion-label></ion-tab-button>
             </ion-tab-bar>
-          </div>
-        }
+          } @else {
+            <ion-tab-bar mode="md" [style]="componentStyles()['ion-tab-bar']">
+              <ion-tab-button mode="md" selected [style]="componentStyles()['ion-tab-button']"><ion-icon name="home-outline"></ion-icon><ion-label>Home</ion-label></ion-tab-button>
+              <ion-tab-button mode="md" [style]="componentStyles()['ion-tab-button']"><ion-icon name="search-outline"></ion-icon><ion-label>Search</ion-label></ion-tab-button>
+              <ion-tab-button mode="md" [style]="componentStyles()['ion-tab-button']"><ion-icon name="heart-outline"></ion-icon><ion-label>Favorites</ion-label><ion-badge color="danger" [style]="componentStyles()['ion-badge']">3</ion-badge></ion-tab-button>
+              <ion-tab-button mode="md" [style]="componentStyles()['ion-tab-button']"><ion-icon name="person-outline"></ion-icon><ion-label>Profile</ion-label></ion-tab-button>
+            </ion-tab-bar>
+          }
+
+        </div>
       </div>
 
       <!-- Home indicator / Nav bar -->

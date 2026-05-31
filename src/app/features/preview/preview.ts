@@ -3,26 +3,63 @@ import {
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
-  effect,
-  ElementRef,
   inject,
-  viewChild,
 } from '@angular/core';
 import { ThemeService } from '../../core/services/theme.service';
 import { generateIonicColorVariables } from '../../core/utils/color.utils';
 import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
-import { IonButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-preview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports:[IonButton],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './preview.html',
 })
 export class PreviewComponent {
   protected readonly themeService = inject(ThemeService);
   protected readonly platform = this.themeService.previewPlatform;
+
+  /** Returns a map of component name → CSS variable overrides as a style object */
+  protected readonly componentStyles = computed(() => {
+    const components = this.themeService.componentThemes();
+    const currentPlatform = this.platform();
+    const map: Record<string, Record<string, string>> = {};
+
+    for (const component of components) {
+      const overrides = component.variables.filter(
+        (v) => v.value !== v.defaultValue
+      );
+      if (overrides.length === 0) continue;
+
+      if (component.mode !== 'all' && component.mode !== currentPlatform) continue;
+
+      const styles: Record<string, string> = {};
+      for (const variable of overrides) {
+        styles[variable.name] = variable.value;
+      }
+      map[component.componentName] = styles;
+    }
+
+    return map;
+  });
+
+  /**
+   * Resolves the effective mode for each component.
+   * If component mode is 'all', falls back to the current platform.
+   * Otherwise uses the component's explicit mode.
+   */
+  protected readonly componentModes = computed(() => {
+    const components = this.themeService.componentThemes();
+    const currentPlatform = this.platform();
+    const map: Record<string, 'ios' | 'md'> = {};
+
+    for (const component of components) {
+      map[component.componentName] =
+        component.mode === 'all' ? currentPlatform : component.mode;
+    }
+
+    return map;
+  });
 
   protected readonly previewStyles = computed(() => {
     const mode = this.themeService.mode();
@@ -71,32 +108,5 @@ export class PreviewComponent {
     styles.push(`--ion-backdrop-opacity: ${theme.backdropOpacity}`);
 
     return styles.join('; ');
-  });
-
-  protected readonly componentStyleBlock = computed(() => {
-    const components = this.themeService.componentThemes();
-    const currentPlatform = this.platform();
-    const lines: string[] = [];
-
-    for (const component of components) {
-      const overrides = component.variables.filter(
-        (v) => v.value !== v.defaultValue
-      );
-      if (overrides.length === 0) continue;
-
-      const selector =
-        component.mode === 'all' || component.mode === currentPlatform
-          ? component.componentName
-          : null;
-      if (!selector) continue;
-
-      lines.push(`${selector} {`);
-      for (const variable of overrides) {
-        lines.push(`  ${variable.name}: ${variable.value};`);
-      }
-      lines.push('}');
-    }
-
-    return lines.join('\n');
   });
 }
