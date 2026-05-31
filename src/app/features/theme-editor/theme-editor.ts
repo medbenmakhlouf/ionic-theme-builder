@@ -5,6 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { GlobalColorsComponent } from './global-colors/global-colors';
 import { ComponentEditorComponent } from './component-editor/component-editor';
 import { DarkModeEditorComponent } from './dark-mode-editor/dark-mode-editor';
@@ -18,6 +19,7 @@ type SidebarTab = 'colors' | 'dark' | 'components';
   selector: 'app-theme-editor',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    FormsModule,
     GlobalColorsComponent,
     ComponentEditorComponent,
     DarkModeEditorComponent,
@@ -35,6 +37,21 @@ type SidebarTab = 'colors' | 'dark' | 'components';
           <span class="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full uppercase tracking-wide">
             v8+
           </span>
+
+          <!-- Divider -->
+          <div class="w-px h-6 bg-gray-300"></div>
+
+          <!-- Preset selector -->
+          <select
+            [ngModel]="themeService.activePreset()"
+            (ngModelChange)="themeService.applyPreset($event)"
+            class="text-xs font-medium border border-gray-200 rounded-lg px-3 py-1.5 bg-gray-50 hover:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 cursor-pointer transition-all"
+            aria-label="Theme preset"
+          >
+            @for (preset of themeService.presets; track preset.id) {
+              <option [value]="preset.id">{{ preset.name }}</option>
+            }
+          </select>
         </div>
         <div class="flex items-center gap-3">
           <!-- Platform toggle -->

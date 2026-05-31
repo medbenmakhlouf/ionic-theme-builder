@@ -15,6 +15,7 @@ import {
   ThemeMode,
   getTailwindTokens,
 } from '../models/theme.model';
+import { THEME_PRESETS } from '../models/theme-presets';
 import {
   generateIonicColorVariables,
   generateSteppedColors,
@@ -27,6 +28,7 @@ export class ThemeService {
   readonly globalMode = signal<IonicMode>('all');
   readonly previewPlatform = signal<'ios' | 'md'>('ios');
   readonly useTailwind = signal(false);
+  readonly activePreset = signal<string>('default');
   readonly globalTheme = signal<GlobalThemeConfig>({ ...DEFAULT_GLOBAL_THEME });
   readonly darkTheme = signal<DarkModeConfig>(structuredClone(DEFAULT_DARK_THEME));
   readonly componentThemes = signal<ComponentThemeConfig[]>(
@@ -34,7 +36,23 @@ export class ThemeService {
   );
   readonly customColors = signal<CustomColor[]>([]);
 
+  readonly presets = THEME_PRESETS;
   readonly generatedCss = computed(() => this.buildCss());
+
+  applyPreset(presetId: string): void {
+    const preset = THEME_PRESETS.find((p) => p.id === presetId);
+    if (!preset) return;
+
+    this.activePreset.set(presetId);
+    this.globalTheme.set({ ...preset.light });
+    this.darkTheme.set({
+      enabled: true,
+      strategy: 'system',
+      ...structuredClone(preset.dark),
+    });
+    this.componentThemes.set(structuredClone(IONIC_COMPONENTS));
+    this.customColors.set([]);
+  }
 
   updateColor(name: IonicColorName, value: string): void {
     this.globalTheme.update((theme) => ({
