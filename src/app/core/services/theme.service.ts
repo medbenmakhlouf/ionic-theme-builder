@@ -263,24 +263,28 @@ export class ThemeService {
     }
 
     // Per-component variables with mode support
-    const hasComponentOverrides = components.some((c) =>
-      c.variables.some((v) => v.value !== v.defaultValue)
+    const componentsToOutput = components.filter((c) =>
+      c.mode !== 'all' || c.variables.some((v) => v.value !== v.defaultValue)
     );
 
-    if (hasComponentOverrides) {
+    if (componentsToOutput.length > 0) {
       lines.push('');
       lines.push('/* Component-Specific Overrides */');
 
-      for (const component of components) {
+      for (const component of componentsToOutput) {
         const overrides = component.variables.filter(
           (v) => v.value !== v.defaultValue
         );
-        if (overrides.length === 0) continue;
+        // If mode is non-default, always output the block (even with defaults)
+        const variablesToOutput = component.mode !== 'all'
+          ? component.variables
+          : overrides;
+        if (variablesToOutput.length === 0) continue;
 
         const selector = this.getComponentSelector(component.componentName, component.mode);
         lines.push('');
         lines.push(`${selector} {`);
-        for (const variable of overrides) {
+        for (const variable of variablesToOutput) {
           lines.push(`  ${variable.name}: ${variable.value};`);
         }
         lines.push('}');
