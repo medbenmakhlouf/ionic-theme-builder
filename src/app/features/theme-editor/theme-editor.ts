@@ -12,7 +12,6 @@ import { PreviewComponent } from '../preview/preview';
 import { CssOutputComponent } from '../css-output/css-output';
 import { ThemeService } from '../../core/services/theme.service';
 
-type ActiveTab = 'preview' | 'css';
 type SidebarTab = 'colors' | 'dark' | 'components';
 
 @Component({
@@ -129,46 +128,16 @@ type SidebarTab = 'colors' | 'dark' | 'components';
           </div>
         </aside>
 
-        <!-- Main Panel -->
-        <main class="flex-1 flex flex-col overflow-hidden p-5">
-          <!-- Tab Switcher -->
-          <div class="flex gap-1 mb-4 bg-gray-100 rounded-xl p-1.5 w-fit shadow-inner" role="tablist">
-            <button
-              type="button"
-              role="tab"
-              [attr.aria-selected]="activeTab() === 'preview'"
-              class="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all cursor-pointer"
-              [class]="activeTab() === 'preview'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'"
-              (click)="activeTab.set('preview')"
-            >
-              👁 Preview
-            </button>
-            <button
-              type="button"
-              role="tab"
-              [attr.aria-selected]="activeTab() === 'css'"
-              class="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all cursor-pointer"
-              [class]="activeTab() === 'css'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'"
-              (click)="activeTab.set('css')"
-            >
-              💻 CSS Output
-            </button>
+        <!-- Main Panel: CSS on the left, Phone preview on the right -->
+        <main class="flex-1 flex overflow-hidden gap-5 p-5">
+          <!-- CSS Output (left) -->
+          <div class="flex-1 flex flex-col overflow-hidden min-w-0">
+            <app-css-output />
           </div>
 
-          <!-- Tab Content -->
-          <div class="flex-1 overflow-hidden" role="tabpanel">
-            @switch (activeTab()) {
-              @case ('preview') {
-                <app-preview />
-              }
-              @case ('css') {
-                <app-css-output />
-              }
-            }
+          <!-- Phone Preview (right) -->
+          <div class="flex flex-col overflow-hidden w-[440px] shrink-0">
+            <app-preview />
           </div>
         </main>
       </div>
@@ -177,7 +146,6 @@ type SidebarTab = 'colors' | 'dark' | 'components';
 })
 export class ThemeEditorComponent {
   protected readonly themeService = inject(ThemeService);
-  protected readonly activeTab = signal<ActiveTab>('preview');
   protected readonly sidebarTab = signal<SidebarTab>('colors');
   protected readonly componentCount = computed(
     () => this.themeService.componentThemes().length
