@@ -1,6 +1,6 @@
 /* Global styles */
-@import 'tailwindcss';
-
+@import 'tailwindcss/theme.css';
+@import 'tailwindcss/utilities.css';
 html, body {
   margin: 0;
   padding: 0;
