@@ -103,19 +103,57 @@ import { ThemeService } from '../../../core/services/theme.service';
                     >
                       {{ variable.label }}
                     </label>
-                    <input
-                      type="text"
-                      [ngModel]="variable.value"
-                      (ngModelChange)="
-                        themeService.updateComponentVariable(
-                          component.componentName,
-                          variable.name,
-                          $event
-                        )
-                      "
-                      class="w-[5.5rem] text-xs font-mono px-2 py-1 border border-gray-200 rounded-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all"
-                      [attr.aria-label]="variable.label + ' value'"
-                    />
+                    @if (variable.type === 'size') {
+                      <div class="flex items-center gap-0.5">
+                        <input
+                          [id]="component.componentName + '-' + variable.name"
+                          type="number"
+                          [ngModel]="parseNumericValue(variable.value)"
+                          (ngModelChange)="
+                            onSizeValueChange(
+                              component.componentName,
+                              variable.name,
+                              $event,
+                              variable.value
+                            )
+                          "
+                          step="1"
+                          class="w-16 text-xs font-mono px-2 py-1 border border-gray-200 rounded-l-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          [attr.aria-label]="variable.label + ' numeric value'"
+                        />
+                        <select
+                          [ngModel]="parseUnit(variable.value)"
+                          (ngModelChange)="
+                            onSizeUnitChange(
+                              component.componentName,
+                              variable.name,
+                              $event,
+                              variable.value
+                            )
+                          "
+                          class="text-xs border border-l-0 border-gray-200 rounded-r-md px-1 py-1 bg-gray-50 focus:border-indigo-400 cursor-pointer"
+                          [attr.aria-label]="variable.label + ' unit'"
+                        >
+                          <option value="px">px</option>
+                          <option value="rem">rem</option>
+                        </select>
+                      </div>
+                    } @else {
+                      <input
+                        [id]="component.componentName + '-' + variable.name"
+                        type="text"
+                        [ngModel]="variable.value"
+                        (ngModelChange)="
+                          themeService.updateComponentVariable(
+                            component.componentName,
+                            variable.name,
+                            $event
+                          )
+                        "
+                        class="w-[5.5rem] text-xs font-mono px-2 py-1 border border-gray-200 rounded-md bg-gray-50 focus:bg-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 transition-all"
+                        [attr.aria-label]="variable.label + ' value'"
+                      />
+                    }
                   </div>
                 }
               </div>
@@ -143,5 +181,35 @@ export class ComponentEditorComponent {
 
   protected hasOverrides(variables: { value: string; defaultValue: string }[]): boolean {
     return variables.some((v) => v.value !== v.defaultValue);
+  }
+
+  protected parseNumericValue(value: string): number {
+    const num = parseFloat(value);
+    return isNaN(num) ? 0 : num;
+  }
+
+  protected parseUnit(value: string): 'px' | 'rem' {
+    if (value.trim().endsWith('rem')) return 'rem';
+    return 'px';
+  }
+
+  protected onSizeValueChange(
+    componentName: string,
+    variableName: string,
+    numericValue: number,
+    currentValue: string
+  ): void {
+    const unit = this.parseUnit(currentValue);
+    this.themeService.updateComponentVariable(componentName, variableName, `${numericValue}${unit}`);
+  }
+
+  protected onSizeUnitChange(
+    componentName: string,
+    variableName: string,
+    newUnit: 'px' | 'rem',
+    currentValue: string
+  ): void {
+    const num = this.parseNumericValue(currentValue);
+    this.themeService.updateComponentVariable(componentName, variableName, `${num}${newUnit}`);
   }
 }
