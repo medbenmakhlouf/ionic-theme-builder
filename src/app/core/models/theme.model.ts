@@ -53,6 +53,7 @@ export interface ComponentThemeConfig {
   label: string;
   description: string;
   variables: ComponentVariable[];
+  mode: IonicMode;
 }
 
 export interface ComponentVariable {
@@ -65,6 +66,7 @@ export interface ComponentVariable {
 
 export type ThemeMode = 'light' | 'dark';
 export type DarkModeStrategy = 'always' | 'system' | 'class';
+export type IonicMode = 'all' | 'ios' | 'md';
 
 export const IONIC_COLOR_NAMES = [
   'primary',
@@ -149,6 +151,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-button',
     label: 'Button',
+    mode: 'all',
     description: 'Interactive button for actions',
     variables: [
       { name: '--border-radius', label: 'Border Radius', value: '10px', type: 'size', defaultValue: '10px' },
@@ -163,6 +166,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-card',
     label: 'Card',
+    mode: 'all',
     description: 'Container for grouped content',
     variables: [
       { name: '--background', label: 'Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -174,6 +178,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-toolbar',
     label: 'Toolbar',
+    mode: 'all',
     description: 'Top/bottom app bar',
     variables: [
       { name: '--background', label: 'Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -188,6 +193,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-input',
     label: 'Input',
+    mode: 'all',
     description: 'Text input field',
     variables: [
       { name: '--background', label: 'Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -203,6 +209,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-textarea',
     label: 'Textarea',
+    mode: 'all',
     description: 'Multi-line text input',
     variables: [
       { name: '--background', label: 'Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -217,6 +224,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-item',
     label: 'Item',
+    mode: 'all',
     description: 'List item container',
     variables: [
       { name: '--background', label: 'Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -231,6 +239,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-list',
     label: 'List',
+    mode: 'all',
     description: 'Container for list items',
     variables: [
       { name: '--ion-item-background', label: 'Item Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -240,6 +249,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-tab-bar',
     label: 'Tab Bar',
+    mode: 'all',
     description: 'Bottom tab navigation bar',
     variables: [
       { name: '--background', label: 'Background', value: '#f8f8f8', type: 'color', defaultValue: '#f8f8f8' },
@@ -251,6 +261,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-toggle',
     label: 'Toggle',
+    mode: 'all',
     description: 'On/off switch control',
     variables: [
       { name: '--track-background', label: 'Track Background', value: '#e0e0e0', type: 'color', defaultValue: '#e0e0e0' },
@@ -264,6 +275,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-checkbox',
     label: 'Checkbox',
+    mode: 'all',
     description: 'Checkable form control',
     variables: [
       { name: '--border-color', label: 'Border Color', value: '#c8c7cc', type: 'color', defaultValue: '#c8c7cc' },
@@ -277,6 +289,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-radio',
     label: 'Radio',
+    mode: 'all',
     description: 'Radio selection control',
     variables: [
       { name: '--border-radius', label: 'Border Radius', value: '50%', type: 'text', defaultValue: '50%' },
@@ -287,6 +300,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-select',
     label: 'Select',
+    mode: 'all',
     description: 'Dropdown selection control',
     variables: [
       { name: '--background', label: 'Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -300,6 +314,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-chip',
     label: 'Chip',
+    mode: 'all',
     description: 'Compact element for labels/tags',
     variables: [
       { name: '--background', label: 'Background', value: 'rgba(0,0,0,0.08)', type: 'text', defaultValue: 'rgba(0,0,0,0.08)' },
@@ -310,6 +325,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-badge',
     label: 'Badge',
+    mode: 'all',
     description: 'Small status indicator',
     variables: [
       { name: '--background', label: 'Background', value: '#4c8dff', type: 'color', defaultValue: '#4c8dff' },
@@ -324,6 +340,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-alert',
     label: 'Alert',
+    mode: 'all',
     description: 'Dialog for alerts and confirmations',
     variables: [
       { name: '--background', label: 'Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -335,6 +352,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-modal',
     label: 'Modal',
+    mode: 'all',
     description: 'Full-screen or sheet dialog',
     variables: [
       { name: '--background', label: 'Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -347,6 +365,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-popover',
     label: 'Popover',
+    mode: 'all',
     description: 'Floating content overlay',
     variables: [
       { name: '--background', label: 'Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -359,6 +378,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-toast',
     label: 'Toast',
+    mode: 'all',
     description: 'Temporary notification message',
     variables: [
       { name: '--background', label: 'Background', value: '#333333', type: 'color', defaultValue: '#333333' },
@@ -371,6 +391,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-action-sheet',
     label: 'Action Sheet',
+    mode: 'all',
     description: 'Bottom sheet with actions',
     variables: [
       { name: '--background', label: 'Background', value: '#f9f9f9', type: 'color', defaultValue: '#f9f9f9' },
@@ -382,6 +403,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-fab',
     label: 'FAB',
+    mode: 'all',
     description: 'Floating action button',
     variables: [
       { name: '--background', label: 'Background', value: '#4c8dff', type: 'color', defaultValue: '#4c8dff' },
@@ -393,6 +415,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-segment',
     label: 'Segment',
+    mode: 'all',
     description: 'Segmented tab control',
     variables: [
       { name: '--background', label: 'Background', value: 'rgba(0,0,0,0.065)', type: 'text', defaultValue: 'rgba(0,0,0,0.065)' },
@@ -402,6 +425,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-segment-button',
     label: 'Segment Button',
+    mode: 'all',
     description: 'Button within a segment',
     variables: [
       { name: '--background-checked', label: 'BG (Checked)', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -414,6 +438,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-searchbar',
     label: 'Searchbar',
+    mode: 'all',
     description: 'Search input with icon',
     variables: [
       { name: '--background', label: 'Background', value: '#f0f0f0', type: 'color', defaultValue: '#f0f0f0' },
@@ -426,6 +451,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-range',
     label: 'Range',
+    mode: 'all',
     description: 'Slider/range input',
     variables: [
       { name: '--bar-background', label: 'Bar Background', value: '#e0e0e0', type: 'color', defaultValue: '#e0e0e0' },
@@ -439,6 +465,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-progress-bar',
     label: 'Progress Bar',
+    mode: 'all',
     description: 'Horizontal progress indicator',
     variables: [
       { name: '--background', label: 'Track Background', value: '#e0e0e0', type: 'color', defaultValue: '#e0e0e0' },
@@ -449,6 +476,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-spinner',
     label: 'Spinner',
+    mode: 'all',
     description: 'Loading spinner indicator',
     variables: [
       { name: '--color', label: 'Color', value: '#999999', type: 'color', defaultValue: '#999999' },
@@ -457,6 +485,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-skeleton-text',
     label: 'Skeleton Text',
+    mode: 'all',
     description: 'Loading placeholder',
     variables: [
       { name: '--background', label: 'Background', value: '#eeeeee', type: 'color', defaultValue: '#eeeeee' },
@@ -467,6 +496,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-avatar',
     label: 'Avatar',
+    mode: 'all',
     description: 'Circular image container',
     variables: [
       { name: '--border-radius', label: 'Border Radius', value: '50%', type: 'text', defaultValue: '50%' },
@@ -475,6 +505,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-thumbnail',
     label: 'Thumbnail',
+    mode: 'all',
     description: 'Small image preview',
     variables: [
       { name: '--border-radius', label: 'Border Radius', value: '4px', type: 'size', defaultValue: '4px' },
@@ -484,6 +515,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-accordion',
     label: 'Accordion',
+    mode: 'all',
     description: 'Expandable content section',
     variables: [
       { name: '--background', label: 'Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },
@@ -494,6 +526,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-breadcrumb',
     label: 'Breadcrumb',
+    mode: 'all',
     description: 'Navigation breadcrumb trail',
     variables: [
       { name: '--color', label: 'Text Color', value: '#666666', type: 'color', defaultValue: '#666666' },
@@ -504,6 +537,7 @@ export const IONIC_COMPONENTS: ComponentThemeConfig[] = [
   {
     componentName: 'ion-datetime',
     label: 'Datetime',
+    mode: 'all',
     description: 'Date and time picker',
     variables: [
       { name: '--background', label: 'Background', value: '#ffffff', type: 'color', defaultValue: '#ffffff' },

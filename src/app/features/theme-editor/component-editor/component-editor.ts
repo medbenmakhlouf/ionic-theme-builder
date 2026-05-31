@@ -25,8 +25,15 @@ import { ThemeService } from '../../../core/services/theme.service';
               [attr.aria-controls]="'panel-' + component.componentName"
               (click)="toggleComponent(component.componentName)"
             >
-              <span class="text-sm font-medium text-gray-800">
-                {{ component.label }}
+              <span class="flex items-center gap-2">
+                <span class="text-sm font-medium text-gray-800">
+                  {{ component.label }}
+                </span>
+                @if (component.mode !== 'all') {
+                  <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 uppercase">
+                    {{ component.mode }}
+                  </span>
+                }
               </span>
               <span
                 class="text-gray-500 text-xs transition-transform duration-200"
@@ -43,7 +50,26 @@ import { ThemeService } from '../../../core/services/theme.service';
                 role="region"
                 class="px-4 py-3 space-y-3 border-t border-gray-200"
               >
-                <div class="flex justify-end">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <label
+                      [attr.for]="'mode-' + component.componentName"
+                      class="text-xs font-medium text-gray-500"
+                    >
+                      Mode:
+                    </label>
+                    <select
+                      [id]="'mode-' + component.componentName"
+                      [value]="component.mode"
+                      (change)="onComponentModeChange(component.componentName, $event)"
+                      class="text-xs border border-gray-300 rounded px-1.5 py-0.5 bg-white cursor-pointer"
+                      [attr.aria-label]="component.label + ' platform mode'"
+                    >
+                      <option value="all">All</option>
+                      <option value="ios">iOS</option>
+                      <option value="md">MD</option>
+                    </select>
+                  </div>
                   <button
                     type="button"
                     class="text-xs text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
@@ -130,5 +156,10 @@ export class ComponentEditorComponent {
     this.expandedComponent.update((current) =>
       current === name ? null : name
     );
+  }
+
+  protected onComponentModeChange(componentName: string, event: Event): void {
+    const value = (event.target as HTMLSelectElement).value as 'all' | 'ios' | 'md';
+    this.themeService.updateComponentMode(componentName, value);
   }
 }

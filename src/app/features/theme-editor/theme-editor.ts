@@ -38,6 +38,20 @@ type SidebarTab = 'colors' | 'dark' | 'components';
           </span>
         </div>
         <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <label for="global-mode" class="text-xs text-gray-500">Mode:</label>
+            <select
+              id="global-mode"
+              class="text-xs border border-gray-300 rounded-md px-2 py-1 bg-white cursor-pointer"
+              [value]="themeService.globalMode()"
+              (change)="onGlobalModeChange($event)"
+              aria-label="Global platform mode"
+            >
+              <option value="all">All Platforms</option>
+              <option value="ios">iOS Only</option>
+              <option value="md">Material Design Only</option>
+            </select>
+          </div>
           <span class="text-xs text-gray-500">
             {{ componentCount() }} components
           </span>
@@ -168,4 +182,9 @@ export class ThemeEditorComponent {
   protected readonly componentCount = computed(
     () => this.themeService.componentThemes().length
   );
+
+  protected onGlobalModeChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value as 'all' | 'ios' | 'md';
+    this.themeService.setGlobalMode(value);
+  }
 }

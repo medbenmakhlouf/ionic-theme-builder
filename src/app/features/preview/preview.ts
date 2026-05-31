@@ -18,27 +18,42 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
     <section class="h-full flex flex-col">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-lg font-semibold text-gray-900">Live Preview</h2>
-        <div class="flex items-center gap-2">
-          <label for="preview-mode" class="text-sm text-gray-600">Mode:</label>
-          <select
-            id="preview-mode"
-            class="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white"
-            [value]="previewMode()"
-            (change)="onModeChange($event)"
-          >
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <label for="preview-platform" class="text-sm text-gray-600">Platform:</label>
+            <select
+              id="preview-platform"
+              class="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white"
+              [value]="previewPlatform()"
+              (change)="onPlatformChange($event)"
+            >
+              <option value="ios">iOS</option>
+              <option value="md">Material Design</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <label for="preview-mode" class="text-sm text-gray-600">Theme:</label>
+            <select
+              id="preview-mode"
+              class="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white"
+              [value]="previewMode()"
+              (change)="onModeChange($event)"
+            >
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
         </div>
       </div>
 
       <div
-        class="flex-1 overflow-auto rounded-lg border border-gray-200"
+        class="flex-1 overflow-auto rounded-lg border border-gray-200 ionic-preview-container"
         [style]="previewStyles()"
+        [class.ion-palette-dark]="previewMode() === 'dark'"
       >
-        <div class="ionic-preview p-4 space-y-6">
+        <div class="ionic-preview p-4 space-y-6" [attr.mode]="previewPlatform()">
           <!-- Toolbar -->
-          <ion-toolbar>
+          <ion-toolbar [attr.mode]="previewPlatform()">
             <ion-title>My App</ion-title>
             <ion-buttons slot="start">
               <ion-button>
@@ -56,7 +71,7 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
           </ion-toolbar>
 
           <!-- Segment -->
-          <ion-segment value="all">
+          <ion-segment value="all" [attr.mode]="previewPlatform()">
             <ion-segment-button value="all">
               <ion-label>All</ion-label>
             </ion-segment-button>
@@ -103,10 +118,10 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
           </ion-card>
 
           <!-- Searchbar -->
-          <ion-searchbar placeholder="Search items..."></ion-searchbar>
+          <ion-searchbar placeholder="Search items..." [attr.mode]="previewPlatform()"></ion-searchbar>
 
           <!-- List with various items -->
-          <ion-list>
+          <ion-list [attr.mode]="previewPlatform()">
             <ion-item>
               <ion-avatar slot="start">
                 <div class="w-10 h-10 rounded-full bg-blue-200 flex items-center justify-center text-sm font-bold text-blue-700">AB</div>
@@ -261,7 +276,7 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
           </div>
 
           <!-- Tab Bar -->
-          <ion-tab-bar>
+          <ion-tab-bar [attr.mode]="previewPlatform()">
             <ion-tab-button selected>
               <ion-icon name="home-outline"></ion-icon>
               <ion-label>Home</ion-label>
@@ -288,10 +303,16 @@ import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
 export class PreviewComponent {
   private readonly themeService = inject(ThemeService);
   protected readonly previewMode = signal<'light' | 'dark'>('light');
+  protected readonly previewPlatform = signal<'ios' | 'md'>('ios');
 
   protected onModeChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value as 'light' | 'dark';
     this.previewMode.set(value);
+  }
+
+  protected onPlatformChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value as 'ios' | 'md';
+    this.previewPlatform.set(value);
   }
 
   protected readonly previewStyles = computed(() => {
