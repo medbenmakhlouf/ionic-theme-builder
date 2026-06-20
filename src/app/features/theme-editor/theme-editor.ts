@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { GlobalColorsComponent } from './global-colors/global-colors';
 import { ComponentEditorComponent } from './component-editor/component-editor';
@@ -11,7 +11,6 @@ type SidebarTab = 'colors' | 'dark' | 'components';
 
 @Component({
   selector: 'app-theme-editor',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     GlobalColorsComponent,

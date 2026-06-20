@@ -1,18 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  CUSTOM_ELEMENTS_SCHEMA,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, computed, CUSTOM_ELEMENTS_SCHEMA, inject, signal } from '@angular/core';
 import { ThemeService } from '../../core/services/theme.service';
 import { generateIonicColorVariables } from '../../core/utils/color.utils';
 import { IONIC_COLOR_NAMES } from '../../core/models/theme.model';
 
 @Component({
   selector: 'app-preview',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './preview.html',
 })

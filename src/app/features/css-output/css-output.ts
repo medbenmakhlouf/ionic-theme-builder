@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-css-output',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex flex-col overflow-hidden h-full min-h-0' },
   template: `
     <div class="flex items-center justify-between mb-3 shrink-0">
